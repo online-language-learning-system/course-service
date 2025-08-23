@@ -6,35 +6,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "lessons")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Course {
+public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long moduleId;
+
     private String title;
+
+    private Long contentRef;
+
+    private int position;
 
     private String description;
 
-    @Column(name = "start_date")
-    private LocalDateTime startDate;
-
-    @Column(name = "end_date")
-    private LocalDateTime endDate;
-
-    @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
-    @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
 }
