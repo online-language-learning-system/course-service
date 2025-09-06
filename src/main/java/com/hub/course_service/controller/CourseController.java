@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 public class CourseController {
@@ -46,6 +47,33 @@ public class CourseController {
     )
     public ResponseEntity<CourseGetDetailDto> getCourseDetailById(@PathVariable Long id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
+    }
+
+    @GetMapping("/storefront/courses/{courseTitle}")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok",
+                            content = @Content(
+                                    schema = @Schema(implementation = CourseGetDetailDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorDto.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<List<CourseGetDetailDto>> getCoursesByTitle(
+            @PathVariable String courseTitle,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return ResponseEntity.ok(courseService.getCoursesByName(courseTitle, pageNumber, pageSize));
     }
 
     @PostMapping("/backoffice/courses")

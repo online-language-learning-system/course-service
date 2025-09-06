@@ -7,7 +7,14 @@ import com.hub.course_service.dto.course.CourseGetDetailDto;
 import com.hub.course_service.model.Course;
 import com.hub.course_service.repository.CourseRepository;
 import com.hub.course_service.utils.Constants;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CourseService {
@@ -24,6 +31,22 @@ public class CourseService {
                 .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, id));
 
         return CourseGetDetailDto.fromModel(course);
+    }
+
+    public List<CourseGetDetailDto> getCoursesByName(String courseTitle, int pageNumber, int pageSize) {
+        if (courseTitle.isEmpty())
+            return null;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Course> coursePage = courseRepository.findAllByTitle(courseTitle, pageable);
+
+        if (coursePage.hasContent()) {
+            return coursePage.stream()
+                    .map(CourseGetDetailDto::fromModel)
+                    .toList();
+        } else {
+            throw new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseTitle);
+        }
     }
 
     public Course create(CoursePostDto coursePostDto) {

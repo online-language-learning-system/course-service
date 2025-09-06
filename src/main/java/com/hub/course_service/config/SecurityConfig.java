@@ -28,7 +28,7 @@ public class SecurityConfig {
                 author ->
                     author
                         .requestMatchers("/swagger-ui", "/swagger-ui/**","/v3/api-docs/**").permitAll()
-                        .requestMatchers("/storefront/**").permitAll()
+                        .requestMatchers("/storefront/**", "/storefront/courses/**").permitAll()
                         .requestMatchers("/backoffice/**").hasRole("admin")
                         .anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 ->

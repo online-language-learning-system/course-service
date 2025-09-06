@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "courses")
+@Table(name = "courses", schema = "app")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,6 +24,8 @@ public class Course {
 
     private String title;
 
+    private BigDecimal price;
+
     private String description;
 
     @Column(name = "start_date")
@@ -31,10 +34,16 @@ public class Course {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Column(name = "created_at")
-    private OffsetDateTime createdAt;
+    @Column(name = "created_by")
+    private String createdBy;
 
-    @Column(name = "updated_at")
-    private OffsetDateTime updatedAt;
+    @Column(name = "created_on")
+    private OffsetDateTime createdOn;
+
+    @Column(name = "last_modified_by")
+    private String lastModifiedBy;
+
+    @Column(name = "last_modified_on")
+    private OffsetDateTime lastModifiedOn;
 
 }
