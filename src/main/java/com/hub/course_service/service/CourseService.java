@@ -2,18 +2,17 @@ package com.hub.course_service.service;
 
 import com.hub.common_library.exception.DuplicatedException;
 import com.hub.common_library.exception.NotFoundException;
+import com.hub.course_service.dto.course.CourseListGetDto;
 import com.hub.course_service.dto.course.CoursePostDto;
-import com.hub.course_service.dto.course.CourseGetDetailDto;
+import com.hub.course_service.dto.course.CourseDetailGetDto;
 import com.hub.course_service.model.Course;
 import com.hub.course_service.repository.CourseRepository;
 import com.hub.course_service.utils.Constants;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,14 +24,15 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public CourseGetDetailDto getCourseById(Long id) {
+    public CourseDetailGetDto getCourseById(Long id) {
         Course course = courseRepository
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, id));
 
-        return CourseGetDetailDto.fromModel(course);
+        return CourseDetailGetDto.fromModel(course);
     }
 
+    /*
     public List<CourseGetDetailDto> getCoursesByName(String courseTitle, int pageNumber, int pageSize) {
         if (courseTitle.isEmpty())
             return null;
@@ -47,6 +47,27 @@ public class CourseService {
         } else {
             throw new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseTitle);
         }
+    }
+     */
+
+    public CourseListGetDto getCoursesWithFilter(int pageNo, int pageSize, String courseTitle) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Course> coursePage = courseRepository.findCoursesWithFilter(courseTitle.trim().toLowerCase(), pageable);
+
+        List<Course> courses = coursePage.getContent();
+        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
+                .map(course -> CourseDetailGetDto.fromModel(course))
+                .toList();
+
+        return new CourseListGetDto(
+                courseDetailGetDtos,
+                coursePage.getNumber(),
+                coursePage.getSize(),
+                (int) coursePage.getTotalElements(),
+                coursePage.getTotalPages(),
+                coursePage.isLast()
+        );
     }
 
     public Course create(CoursePostDto coursePostDto) {

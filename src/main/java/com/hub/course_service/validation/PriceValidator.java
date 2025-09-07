@@ -1,0 +1,12 @@
+package com.hub.course_service.validation;
+
+import jakarta.validation.ConstraintValidator;
+
+import java.math.BigDecimal;
+
+// ConstraintValidator<A extends Annotation,T>:
+// Defines the logic to validate a given constraint A for a given object type T.
+
+public class PriceValidator
+        implements ConstraintValidator<ValidateProductPrice, BigDecimal> {
+}

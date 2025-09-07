@@ -1,6 +1,6 @@
 package com.hub.course_service.service;
 
-import com.hub.course_service.dto.course.CourseGetDetailDto;
+import com.hub.course_service.dto.course.CourseDetailGetDto;
 import com.hub.course_service.dto.course.CoursePostDto;
 import com.hub.course_service.model.Course;
 import com.hub.course_service.repository.CourseRepository;
@@ -77,12 +77,12 @@ public class CourseServiceTest {
         given(courseRepository.findById(id)).willReturn(Optional.of(course));
 
         // WHEN
-        CourseGetDetailDto courseGetDetailDto = courseService.getCourseById(id);
+        CourseDetailGetDto courseDetailGetDto = courseService.getCourseById(id);
 
         // VALIDATIONS
-        assertThat(courseGetDetailDto).isNotNull();
-        assertThat(courseGetDetailDto.title()).isEqualTo(TITLE);
-        assertThat(courseGetDetailDto.description()).isEqualTo(DESCRIPTION);
+        assertThat(courseDetailGetDto).isNotNull();
+        assertThat(courseDetailGetDto.title()).isEqualTo(TITLE);
+        assertThat(courseDetailGetDto.description()).isEqualTo(DESCRIPTION);
 
         verify(courseRepository).findById(any(Long.class));
 

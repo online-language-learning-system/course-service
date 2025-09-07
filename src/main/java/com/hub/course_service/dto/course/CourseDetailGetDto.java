@@ -6,9 +6,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
-public record CourseGetDetailDto(
+public record CourseDetailGetDto(
         Long id,
         String title,
+        String teaching_language,
         BigDecimal price,
         String description,
         LocalDateTime startDate,
@@ -16,9 +17,10 @@ public record CourseGetDetailDto(
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt
 ) {
-    public static CourseGetDetailDto fromModel(Course course) {
-        return new CourseGetDetailDto(
-                course.getId(), course.getTitle(), course.getPrice(), course.getDescription(),
+    public static CourseDetailGetDto fromModel(Course course) {
+        return new CourseDetailGetDto(
+                course.getId(), course.getTitle(), course.getTeachingLanguage(),
+                course.getPrice(), course.getDescription(),
                 course.getStartDate(), course.getEndDate(),
                 course.getCreatedOn(), course.getLastModifiedOn());
     }

@@ -1,6 +1,7 @@
 package com.hub.course_service.controller;
 
-import com.hub.course_service.dto.course.CourseGetDetailDto;
+import com.hub.course_service.dto.course.CourseDetailGetDto;
+import com.hub.course_service.dto.course.CourseListGetDto;
 import com.hub.course_service.dto.course.CoursePostDto;
 import com.hub.course_service.dto.error.ErrorDto;
 import com.hub.course_service.model.Course;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
+@Validated
 @RestController
 public class CourseController {
 
@@ -27,88 +30,46 @@ public class CourseController {
     }
 
     @GetMapping("/backoffice/courses/{id}")
-    @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Ok",
-                content = @Content(
-                    schema = @Schema(implementation = CourseGetDetailDto.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "404",
-                description = "Not found",
-                content = @Content(
-                    schema = @Schema(implementation = ErrorDto.class)
-                )
-            )
-        }
-    )
-    public ResponseEntity<CourseGetDetailDto> getCourseDetailById(@PathVariable Long id) {
+    public ResponseEntity<CourseDetailGetDto> getCourseDetailById(@PathVariable Long id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
     }
 
-    @GetMapping("/storefront/courses/{courseTitle}")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Ok",
-                            content = @Content(
-                                    schema = @Schema(implementation = CourseGetDetailDto.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Not found",
-                            content = @Content(
-                                    schema = @Schema(implementation = ErrorDto.class)
-                            )
-                    )
-            }
-    )
-    public ResponseEntity<List<CourseGetDetailDto>> getCoursesByTitle(
-            @PathVariable String courseTitle,
-            @RequestParam(defaultValue = "0") int pageNumber,
-            @RequestParam(defaultValue = "10") int pageSize
+    @GetMapping("/storefront/courses")
+    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
+            @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
     ) {
-        return ResponseEntity.ok(courseService.getCoursesByName(courseTitle, pageNumber, pageSize));
+        return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
     }
 
     @PostMapping("/backoffice/courses")
-    @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "201",
-                description = "Created",
-                content = @Content(
-                        schema = @Schema(implementation = CourseGetDetailDto.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Bad request",
-                content = @Content(
-                    schema = @Schema(implementation = ErrorDto.class)
-                )
-            )
-        }
-    )
-    public ResponseEntity<CourseGetDetailDto> createCourse(
+    public ResponseEntity<CourseDetailGetDto> createCourse(
             @RequestBody CoursePostDto coursePostDto,
             UriComponentsBuilder uriComponentsBuilder,
             Principal principal
     ) {
         Course course = courseService.create(coursePostDto);
-        CourseGetDetailDto courseGetDetailDto = CourseGetDetailDto.fromModel(course);
+        CourseDetailGetDto courseDetailGetDto = CourseDetailGetDto.fromModel(course);
 
         URI uri = uriComponentsBuilder
                 .replacePath("/courses/{id}")
                 .buildAndExpand(course.getId()).toUri();
 
         return ResponseEntity.created(uri)
-                .body(courseGetDetailDto);
+                .body(courseDetailGetDto);
     }
 
 }
+
+
+
+/*
+        @PathVariable Long id
+        endpoint ("/users/{id}")
+        GET /users/123
+
+        @RequestParam String name , @RequestParam int page
+        endpoint ("/users")
+        GET /users?name=John&page=2
+ */

@@ -24,6 +24,9 @@ public class Course {
 
     private String title;
 
+    @Column(name = "teaching_language")
+    private String teachingLanguage;
+
     private BigDecimal price;
 
     private String description;
