@@ -10,9 +10,11 @@ import com.hub.course_service.repository.CourseRepository;
 import com.hub.course_service.utils.Constants;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -70,13 +72,43 @@ public class CourseService {
         );
     }
 
+    public CourseListGetDto getTrialCourse(int pageNo, int pageSize, BigDecimal price) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Course> coursePage = courseRepository.findTrialCourse(price, pageable);
+
+        List<Course> courses = coursePage.getContent();
+        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
+                .map(course -> CourseDetailGetDto.fromModel(course))
+                .toList();
+
+        return new CourseListGetDto(
+                courseDetailGetDtos,
+                coursePage.getNumber(),
+                coursePage.getSize(),
+                (int) coursePage.getTotalElements(),
+                coursePage.getTotalPages(),
+                coursePage.isLast()
+        );
+    }
+
     public Course create(CoursePostDto coursePostDto) {
         validateDuplicateName(coursePostDto.title(), null);
 
         Course course = new Course();
         course.setTitle(coursePostDto.title());
+        course.setTeachingLanguage(coursePostDto.teachingLanguage());
+        course.setPrice(coursePostDto.price());
+
         if (!coursePostDto.description().isEmpty())
             course.setDescription(coursePostDto.description());
+
+        course.setStartDate(coursePostDto.startDate());
+        course.setEndDate(coursePostDto.endDate());
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        course.setCreatedBy(username);
+        course.setLastModifiedBy(username);
 
         return courseRepository.save(course);
     }

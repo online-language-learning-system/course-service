@@ -3,8 +3,10 @@ package com.hub.course_service.config;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 @Configuration
 public class SecurityConfig {
 
+    // localhost:9002/course-service/swagger-ui/index.html
     private static final String ACCESS_REALM_CLAIM = "realm_access";
     private static final String ROLE_CLAIM = "roles";
 
@@ -28,8 +31,9 @@ public class SecurityConfig {
                 author ->
                     author
                         .requestMatchers("/swagger-ui", "/swagger-ui/**","/v3/api-docs/**").permitAll()
-                        .requestMatchers("/storefront/**", "/storefront/courses/**").permitAll()
-                        .requestMatchers("/backoffice/**").hasRole("admin")
+                        .requestMatchers("/storefront/courses/**", "/storefront/courses/trial").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/backoffice/courses").hasRole("lecturer")
+                        .requestMatchers("/backoffice/**").hasRole("lecturer")
                         .anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 ->
                     oauth2.jwt(Customizer.withDefaults()))

@@ -49,4 +49,10 @@ public class Course {
     @Column(name = "last_modified_on")
     private OffsetDateTime lastModifiedOn;
 
+    @PrePersist
+    public void prePersist() {
+        if (createdOn == null) createdOn = OffsetDateTime.now();
+        if (lastModifiedOn == null) lastModifiedOn = OffsetDateTime.now();
+    }
+
 }

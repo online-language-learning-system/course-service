@@ -1,6 +1,7 @@
 package com.hub.course_service.validation;
 
 import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import java.math.BigDecimal;
 
@@ -9,4 +10,20 @@ import java.math.BigDecimal;
 
 public class PriceValidator
         implements ConstraintValidator<ValidateProductPrice, BigDecimal> {
+
+    @Override
+    public void initialize(ValidateProductPrice constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
+
+    @Override
+    public boolean isValid(BigDecimal coursePrice, ConstraintValidatorContext constraintValidatorContext) {
+        return coursePrice.compareTo(BigDecimal.ZERO) >= 0;
+
+        /*
+            0 equals
+            1 greater than
+            -1 less than
+        */
+    }
 }

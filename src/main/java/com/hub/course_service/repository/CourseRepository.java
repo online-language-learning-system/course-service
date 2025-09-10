@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+
 @Repository
 public interface CourseRepository
         extends JpaRepository<Course, Long> {
@@ -19,4 +21,8 @@ public interface CourseRepository
             + "WHERE LOWER(c.title) LIKE %:courseTitle% "
             + "ORDER BY c.id ASC")
     Page<Course> findCoursesWithFilter(@Param("courseTitle") String courseTitle, Pageable pageable);
+
+    @Query("SELECT entity FROM Course entity WHERE entity.price = 0")
+    Page<Course> findTrialCourse(@Param("price") BigDecimal price, Pageable pageable);
+
 }

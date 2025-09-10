@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
@@ -41,6 +42,14 @@ public class CourseController {
             @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
     ) {
         return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
+    }
+
+    @GetMapping("/storefront/courses/trial")
+    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return ResponseEntity.ok(courseService.getTrialCourse(pageNo, pageSize, BigDecimal.ZERO));
     }
 
     @PostMapping("/backoffice/courses")
