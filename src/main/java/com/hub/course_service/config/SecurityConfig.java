@@ -34,7 +34,8 @@ public class SecurityConfig {
                         .requestMatchers("/storefront/courses/**", "/storefront/courses/trial").permitAll()
                         .requestMatchers(HttpMethod.POST, "/backoffice/courses").hasRole("lecturer")
                         .requestMatchers("/backoffice/**").hasRole("lecturer")
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+            )
             .oauth2ResourceServer(oauth2 ->
                     oauth2.jwt(Customizer.withDefaults()))
             .build();

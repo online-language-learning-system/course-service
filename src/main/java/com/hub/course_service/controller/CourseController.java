@@ -39,7 +39,7 @@ public class CourseController {
     public ResponseEntity<CourseListGetDto> getCoursesByTitle(
             @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
     ) {
         return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
     }
