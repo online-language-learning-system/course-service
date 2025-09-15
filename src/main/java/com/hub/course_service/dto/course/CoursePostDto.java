@@ -4,7 +4,7 @@ import com.hub.course_service.validation.ValidateProductPrice;
 import jakarta.validation.constraints.NotBlank;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record CoursePostDto(
 
@@ -12,8 +12,8 @@ public record CoursePostDto(
         @NotBlank String teachingLanguage,
         @ValidateProductPrice BigDecimal price,
         String description,
-        LocalDateTime startDate,
-        LocalDateTime endDate,
+        ZonedDateTime startDate,
+        ZonedDateTime endDate,
         String createdBy,
         String lastModifiedBy
 

@@ -1,5 +1,6 @@
 package com.hub.course_service.model;
 
+import com.hub.common_library.model.AbstractAuditEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,8 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "courses", schema = "app")
@@ -16,43 +16,40 @@ import java.time.OffsetDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Course {
+public class Course extends AbstractAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne  // Many Courses to one Category
+    @JoinColumn(name = "category_id")
+    private CourseCategory categoryId;
 
     private String title;
 
     @Column(name = "teaching_language")
     private String teachingLanguage;
 
+    @Column(nullable = false, precision = 9, scale = 0)
     private BigDecimal price;
 
     private String description;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private ZonedDateTime startDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private ZonedDateTime endDate;
 
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "created_on")
-    private OffsetDateTime createdOn;
-
-    @Column(name = "last_modified_by")
-    private String lastModifiedBy;
-
-    @Column(name = "last_modified_on")
-    private OffsetDateTime lastModifiedOn;
+    @Column(name = "is_approval")
+    private Boolean isApproval;      // Course approval by admin
 
     @PrePersist
     public void prePersist() {
-        if (createdOn == null) createdOn = OffsetDateTime.now();
-        if (lastModifiedOn == null) lastModifiedOn = OffsetDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
+        if (getCreatedOn() == null) setCreatedOn(now);
+        if (getLastModifiedOn() == null) setLastModifiedOn(now);
     }
 
 }
