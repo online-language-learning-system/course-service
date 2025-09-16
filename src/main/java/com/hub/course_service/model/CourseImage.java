@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(schema = "app", name = "course_image")
+@Table(schema = "dbo", name = "course_image")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,11 +18,11 @@ public class CourseImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne                          // Many images to one course
+    @JoinColumn(name = "course_id")     // FK in DB
+    private Course course;
+
     @Column(nullable = false, name = "image_url")
     private String imageUrl;
-
-    @ManyToOne // Many images to one course
-    @JoinColumn(name = "course_id")
-    private Course courseId;
 
 }

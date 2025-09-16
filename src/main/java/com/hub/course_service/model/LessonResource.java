@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(schema = "app", name = "lesson_resource")
+@Table(schema = "dbo", name = "lesson_resource")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,8 +19,9 @@ public class LessonResource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "lesson_id")
-    private Long lessonId;
+    @ManyToOne
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "resource_type")

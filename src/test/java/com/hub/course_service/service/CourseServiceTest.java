@@ -64,28 +64,28 @@ public class CourseServiceTest {
 //
 //    }
 
-    @Test
-    void get_course_successfully() {
-
-        // ASSUMPTIONS
-        Long id = 1L;
-
-        Course course = new Course();
-        course.setId(id);
-        course.setTitle(TITLE);
-        course.setDescription(DESCRIPTION);
-        given(courseRepository.findById(id)).willReturn(Optional.of(course));
-
-        // WHEN
-        CourseDetailGetDto courseDetailGetDto = courseService.getCourseById(id);
-
-        // VALIDATIONS
-        assertThat(courseDetailGetDto).isNotNull();
-        assertThat(courseDetailGetDto.title()).isEqualTo(TITLE);
-        assertThat(courseDetailGetDto.description()).isEqualTo(DESCRIPTION);
-
-        verify(courseRepository).findById(any(Long.class));
-
-    }
+//    @Test
+//    void get_course_successfully() {
+//
+//        // ASSUMPTIONS
+//        Long id = 1L;
+//
+//        Course course = new Course();
+//        course.setId(id);
+//        course.setTitle(TITLE);
+//        course.setDescription(DESCRIPTION);
+//        given(courseRepository.findById(id)).willReturn(Optional.of(course));
+//
+//        // WHEN
+//        CourseDetailGetDto courseDetailGetDto = courseService.getCourseById(id);
+//
+//        // VALIDATIONS
+//        assertThat(courseDetailGetDto).isNotNull();
+//        assertThat(courseDetailGetDto.title()).isEqualTo(TITLE);
+//        assertThat(courseDetailGetDto.description()).isEqualTo(DESCRIPTION);
+//
+//        verify(courseRepository).findById(any(Long.class));
+//
+//    }
 
 }

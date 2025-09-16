@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
-@Table(name = "course_category", schema = "app")
+@Table(name = "course_category", schema = "dbo")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -26,6 +28,9 @@ public class CourseCategory extends AbstractAuditEntity {
     @Column(nullable = false, name = "category_level")
     @Enumerated(EnumType.STRING)
     private CategoryLevel categoryLevel;
+
+    @OneToMany(mappedBy = "courseCategory")    // Mapped By fieldName of entity
+    private List<Course> courses;
 
     private String description;
 

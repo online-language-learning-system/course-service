@@ -2,8 +2,9 @@ package com.hub.course_service.utils;
 
 public final class Constants {
     public static final class ErrorCode {
-        public static final String NAME_ALREADY_EXITED = "NAME_ALREADY_EXITED";
+        public static final String TITLE_ALREADY_EXITED = "TITLE_ALREADY_EXITED";
         public static final String COURSE_NOT_FOUND = "COURSE_NOT_FOUND";
         public static final String CATEGORY_NOT_FOUND = "CATEGORY_NOT_FOUND";
+        public static final String END_DATE_MUST_AFTER_START_DATE = "END_DATE_MUST_AFTER_START_DATE";
     }
 }

@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)                 // Annotation exists until runtime
 @Constraint(validatedBy = PriceValidator.class)     // Specifies the class that will implement the validation logic.
 @Documented                                         // Include this annotation in JavaDoc when generating documentation.
-public @interface ValidateProductPrice {
+public @interface ValidateCoursePrice {
 
     String message() default "Price must greater than 0";
 

@@ -1,21 +1,21 @@
 package com.hub.course_service.dto.course;
 
-import com.hub.course_service.validation.ValidateProductPrice;
+import com.hub.course_service.validation.ValidateCoursePrice;
 import jakarta.validation.constraints.NotBlank;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 public record CoursePostDto(
 
+        Long categoryId,
         @NotBlank String title,
         @NotBlank String teachingLanguage,
-        @ValidateProductPrice BigDecimal price,
+        @ValidateCoursePrice BigDecimal price,
         String description,
-        ZonedDateTime startDate,
-        ZonedDateTime endDate,
-        String createdBy,
-        String lastModifiedBy
+        OffsetDateTime startDate,
+        OffsetDateTime endDate
 
 ) {
 }

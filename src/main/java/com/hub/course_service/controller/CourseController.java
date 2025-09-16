@@ -9,6 +9,8 @@ import com.hub.course_service.service.CourseService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,43 +32,37 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/backoffice/courses/{id}")
-    public ResponseEntity<CourseDetailGetDto> getCourseDetailById(@PathVariable Long id) {
-        return ResponseEntity.ok(courseService.getCourseById(id));
-    }
+//    @GetMapping("/backoffice/courses/{id}")
+//    public ResponseEntity<CourseDetailGetDto> getCourseDetailById(@PathVariable Long id) {
+//        return ResponseEntity.ok(courseService.getCourseById(id));
+//    }
+//
+//    @GetMapping("/storefront/courses")
+//    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
+//            @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
+//            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+//            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
+//    ) {
+//        return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
+//    }
 
-    @GetMapping("/storefront/courses")
-    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
-            @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
-            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
-    ) {
-        return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
-    }
+//    @GetMapping("/storefront/courses/trial")
+//    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
+//            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+//            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+//    ) {
+//        return ResponseEntity.ok(courseService.getTrialCourse(pageNo, pageSize, BigDecimal.ZERO));
+//    }
 
-    @GetMapping("/storefront/courses/trial")
-    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
-            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
-    ) {
-        return ResponseEntity.ok(courseService.getTrialCourse(pageNo, pageSize, BigDecimal.ZERO));
-    }
+    @PostMapping(path = "/backoffice/courses", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<CourseDetailGetDto> createCourse(@RequestBody CoursePostDto coursePostDto) {
+        CourseDetailGetDto courseDetailGetDto = courseService.create(coursePostDto);
 
-    @PostMapping("/backoffice/courses")
-    public ResponseEntity<CourseDetailGetDto> createCourse(
-            @RequestBody CoursePostDto coursePostDto,
-            UriComponentsBuilder uriComponentsBuilder,
-            Principal principal
-    ) {
-        Course course = courseService.create(coursePostDto);
-        CourseDetailGetDto courseDetailGetDto = CourseDetailGetDto.fromModel(course);
+//        URI uri = uriComponentsBuilder
+//                .replacePath("/courses/{id}")
+//                .buildAndExpand(course.getId()).toUri();
 
-        URI uri = uriComponentsBuilder
-                .replacePath("/courses/{id}")
-                .buildAndExpand(course.getId()).toUri();
-
-        return ResponseEntity.created(uri)
-                .body(courseDetailGetDto);
+        return new ResponseEntity<>(courseDetailGetDto, HttpStatus.CREATED);
     }
 
 }

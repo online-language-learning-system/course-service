@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
-@Table(schema = "app", name = "lesson")
+@Table(schema = "dbo", name = "lesson")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,8 +21,9 @@ public class Lesson extends AbstractAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "module_id", nullable = false)
-    private Long moduleId;
+    @ManyToOne
+    @JoinColumn(name = "module_id", nullable = false)
+    private CourseModule courseModule;
 
     @Column(nullable = false)
     private String title;
@@ -36,5 +39,8 @@ public class Lesson extends AbstractAuditEntity {
 
     @Column
     private Integer duration;
+
+    @OneToMany(mappedBy = "lesson")
+    List<LessonResource> lessonResources;
 
 }

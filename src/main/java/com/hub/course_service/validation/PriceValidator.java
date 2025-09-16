@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 // Defines the logic to validate a given constraint A for a given object type T.
 
 public class PriceValidator
-        implements ConstraintValidator<ValidateProductPrice, BigDecimal> {
+        implements ConstraintValidator<ValidateCoursePrice, BigDecimal> {
 
     @Override
-    public void initialize(ValidateProductPrice constraintAnnotation) {
+    public void initialize(ValidateCoursePrice constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
