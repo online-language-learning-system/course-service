@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.Optional;
 
@@ -17,12 +19,23 @@ import java.util.Optional;
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class DatabaseAutoConfig {
 
+    private static final String FIRST_NAME = "given_name";
+    private static final String LAST_NAME = "family_name";
+
     @Bean
     public AuditorAware<String> auditorAware() {
         return () -> {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
             if (auth == null)
                 return Optional.of("");
+
+            if (auth.getPrincipal() instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+                Jwt jwt = jwtAuthenticationToken.getToken();
+                String fullName = jwt.getClaimAsString(FIRST_NAME) + " " + jwt.getClaimAsString(LAST_NAME);
+                return Optional.of(fullName);
+            }
+
             return Optional.of(auth.getName()); // Returns the name of this principal.
         };
     }
@@ -30,8 +43,10 @@ public class DatabaseAutoConfig {
 }
 
 /*
-        -- This class used for keeping track of who created or changed an entity
+        -- USEFUL: This class used for keeping track of who created or changed an entity
         and when the change happened (Auditing) - implementation by AuditorAware<T>
+
+
 
         -- @EnableJpaAuditing: Enable Spring Data JPA Auditing to autopopulate
         @CreatedBy / @LastModifiedBy information based on auditorAware method

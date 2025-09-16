@@ -1,10 +1,9 @@
 package com.hub.course_service.dto.category;
 
-import com.hub.course_service.model.enumeration.Level;
+import com.hub.course_service.model.enumeration.CategoryLevel;
 
 public record CourseCategoryPostDto(
-        String name,
-        Level level,
+        CategoryLevel categoryLevel,
         String description
 ) {
 }

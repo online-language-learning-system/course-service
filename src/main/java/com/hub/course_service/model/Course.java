@@ -31,10 +31,10 @@ public class Course extends AbstractAuditEntity {
     @Column(name = "teaching_language")
     private String teachingLanguage;
 
+    private String description;
+
     @Column(nullable = false, precision = 9, scale = 0)
     private BigDecimal price;
-
-    private String description;
 
     @Column(name = "start_date")
     private ZonedDateTime startDate;
@@ -42,8 +42,8 @@ public class Course extends AbstractAuditEntity {
     @Column(name = "end_date")
     private ZonedDateTime endDate;
 
-    @Column(name = "is_approval")
-    private Boolean isApproval;      // Course approval by admin
+    @Column(name = "approval_status")
+    private Boolean approvalStatus;      // Course approval by admin
 
     @PrePersist
     public void prePersist() {

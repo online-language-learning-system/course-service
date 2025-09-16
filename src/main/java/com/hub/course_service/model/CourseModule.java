@@ -1,7 +1,6 @@
 package com.hub.course_service.model;
 
 import com.hub.common_library.model.AbstractAuditEntity;
-import com.hub.course_service.model.enumeration.CategoryLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,24 +8,28 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "course_category", schema = "app")
-@Setter
+@Table(schema = "app", name = "course_module")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseCategory extends AbstractAuditEntity {
+public class CourseModule extends AbstractAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(nullable = false)
-//    private String name;
+    @Column(name = "course_id", nullable = false)
+    private Long courseId;
 
-    @Column(nullable = false, name = "category_level")
-    @Enumerated(EnumType.STRING)
-    private CategoryLevel categoryLevel;
+    private String title;
 
     private String description;
+
+    @Column(name = "order_index")
+    private int orderIndex;
+
+    @Column(name = "can_free_trial")
+    private Boolean canFreeTrial;
 
 }

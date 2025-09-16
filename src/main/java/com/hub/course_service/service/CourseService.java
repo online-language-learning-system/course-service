@@ -6,6 +6,8 @@ import com.hub.course_service.dto.course.CourseListGetDto;
 import com.hub.course_service.dto.course.CoursePostDto;
 import com.hub.course_service.dto.course.CourseDetailGetDto;
 import com.hub.course_service.model.Course;
+import com.hub.course_service.model.CourseCategory;
+import com.hub.course_service.repository.CourseCategoryRepository;
 import com.hub.course_service.repository.CourseRepository;
 import com.hub.course_service.utils.Constants;
 import org.springframework.data.domain.Page;
@@ -21,9 +23,12 @@ import java.util.List;
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final CourseCategoryRepository courseCategoryRepository;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository,
+                         CourseCategoryRepository courseCategoryRepository) {
         this.courseRepository = courseRepository;
+        this.courseCategoryRepository = courseCategoryRepository;
     }
 
     public CourseDetailGetDto getCourseById(Long id) {
@@ -111,6 +116,18 @@ public class CourseService {
         course.setLastModifiedBy(username);
 
         return courseRepository.save(course);
+    }
+
+    // In Preview
+    private CourseCategory setCourseCategory(Long categoryId, Course course) {
+
+        CourseCategory courseCategory = courseCategoryRepository.findById(categoryId)
+            .orElseThrow(
+                () -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, categoryId)
+            );
+
+        course.setCategoryId(courseCategory);
+        return courseCategory;
     }
 
     private boolean checkExistedName(String name, Long id) {
