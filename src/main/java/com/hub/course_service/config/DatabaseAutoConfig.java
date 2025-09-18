@@ -28,7 +28,7 @@ public class DatabaseAutoConfig {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
             if (auth == null)
-                return Optional.of("");
+                return Optional.of("system");
 
             if (auth.getPrincipal() instanceof JwtAuthenticationToken jwtAuthenticationToken) {
                 Jwt jwt = jwtAuthenticationToken.getToken();

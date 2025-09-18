@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,9 +34,9 @@ public class CourseModule extends AbstractAuditEntity {
     private int orderIndex;
 
     @Column(name = "can_free_trial")
-    private Boolean canFreeTrial;
+    private boolean canFreeTrial;
 
     @OneToMany(mappedBy = "courseModule")
-    private List<Lesson> lessons;
+    private List<Lesson> lessons = new ArrayList<>();
 
 }

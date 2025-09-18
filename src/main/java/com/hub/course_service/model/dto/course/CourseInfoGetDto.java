@@ -1,4 +1,4 @@
-package com.hub.course_service.dto.course;
+package com.hub.course_service.model.dto.course;
 
 import com.hub.course_service.model.Course;
 

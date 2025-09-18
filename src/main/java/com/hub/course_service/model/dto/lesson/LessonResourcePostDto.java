@@ -1,0 +1,9 @@
+package com.hub.course_service.model.dto.lesson;
+
+import com.hub.course_service.model.enumeration.ResourceType;
+
+public record LessonResourcePostDto(
+        ResourceType resourceType,
+        String resourceUrl
+) {
+}

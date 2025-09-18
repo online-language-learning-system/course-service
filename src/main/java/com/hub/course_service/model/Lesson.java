@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,12 +29,6 @@ public class Lesson extends AbstractAuditEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(name = "content_type")
-    private String contentType;
-
-    @Column(name = "content_url")
-    private String contentUrl;
-
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -41,6 +36,6 @@ public class Lesson extends AbstractAuditEntity {
     private Integer duration;
 
     @OneToMany(mappedBy = "lesson")
-    List<LessonResource> lessonResources;
+    List<LessonResource> lessonResources = new ArrayList<>();
 
 }

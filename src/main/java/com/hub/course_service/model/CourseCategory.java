@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "course_category", schema = "dbo")
@@ -22,15 +24,12 @@ public class CourseCategory extends AbstractAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(nullable = false)
-//    private String name;
-
     @Column(nullable = false, name = "category_level")
     @Enumerated(EnumType.STRING)
     private CategoryLevel categoryLevel;
 
-    @OneToMany(mappedBy = "courseCategory")    // Mapped By fieldName of entity
-    private List<Course> courses;
+    @OneToMany(mappedBy = "courseCategory", cascade = CascadeType.ALL)    // Mapped By fieldName of entity
+    private List<Course> courses = new ArrayList<>();
 
     private String description;
 

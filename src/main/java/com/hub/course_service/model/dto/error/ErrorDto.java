@@ -1,4 +1,4 @@
-package com.hub.course_service.dto.error;
+package com.hub.course_service.model.dto.error;
 
 import java.util.ArrayList;
 import java.util.List;

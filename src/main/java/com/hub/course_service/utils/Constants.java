@@ -6,5 +6,7 @@ public final class Constants {
         public static final String COURSE_NOT_FOUND = "COURSE_NOT_FOUND";
         public static final String CATEGORY_NOT_FOUND = "CATEGORY_NOT_FOUND";
         public static final String END_DATE_MUST_AFTER_START_DATE = "END_DATE_MUST_AFTER_START_DATE";
+        public static final String COURSE_MODULE_NOT_FOUND = "COURSE_MODULE_NOT_FOUND";
+        public static final String LESSON_NOT_FOUND = "LESSON_NOT_FOUND";
     }
 }

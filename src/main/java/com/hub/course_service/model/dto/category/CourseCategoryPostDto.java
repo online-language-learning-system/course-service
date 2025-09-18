@@ -1,4 +1,4 @@
-package com.hub.course_service.dto.category;
+package com.hub.course_service.model.dto.category;
 
 import com.hub.course_service.model.enumeration.CategoryLevel;
 

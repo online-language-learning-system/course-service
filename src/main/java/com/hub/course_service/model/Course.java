@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -49,10 +50,10 @@ public class Course extends AbstractAuditEntity {
     private ApprovalStatus approvalStatus;      // Course approval by admin
 
     @OneToMany(mappedBy = "course")
-    private List<CourseImage> courseImages;
+    private List<CourseImage> courseImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "course")
-    private List<CourseModule> courseModules;
+    private List<CourseModule> courseModules = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
@@ -62,3 +63,10 @@ public class Course extends AbstractAuditEntity {
     }
 
 }
+
+//    CascadeType.PERSIST → when saving parent entity, automatically save child entity.
+//    CascadeType.MERGE → when merging/updating parent, merge child.
+//    CascadeType.REMOVE → when deleting parent, delete child.
+//    CascadeType.REFRESH → when refreshing parent, refresh child.
+//    CascadeType.DETACH → when detach parent, detach child.
+//    CascadeType.ALL → includes all of the above types.

@@ -1,26 +1,13 @@
 package com.hub.course_service.controller;
 
-import com.hub.course_service.dto.course.CourseDetailGetDto;
-import com.hub.course_service.dto.course.CourseListGetDto;
-import com.hub.course_service.dto.course.CoursePostDto;
-import com.hub.course_service.dto.error.ErrorDto;
-import com.hub.course_service.model.Course;
+import com.hub.course_service.model.dto.course.CourseDetailGetDto;
+import com.hub.course_service.model.dto.course.CoursePostDto;
 import com.hub.course_service.service.CourseService;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.math.BigDecimal;
-import java.net.URI;
-import java.security.Principal;
-import java.util.List;
 
 @Validated
 @RestController
@@ -56,7 +43,7 @@ public class CourseController {
 
     @PostMapping(path = "/backoffice/courses", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CourseDetailGetDto> createCourse(@RequestBody CoursePostDto coursePostDto) {
-        CourseDetailGetDto courseDetailGetDto = courseService.create(coursePostDto);
+        CourseDetailGetDto courseDetailGetDto = courseService.createCourse(coursePostDto);
 
 //        URI uri = uriComponentsBuilder
 //                .replacePath("/courses/{id}")

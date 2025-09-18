@@ -1,4 +1,4 @@
-package com.hub.course_service.dto.course;
+package com.hub.course_service.model.dto.course;
 
 import com.hub.course_service.model.Course;
 
@@ -19,10 +19,11 @@ public record CourseDetailGetDto(
         String lastModifiedBy,
         OffsetDateTime lastModifiedOn
 ) {
-    public static CourseDetailGetDto fromModel(Course course, String level) {
+    public static CourseDetailGetDto fromModel(Course course) {
         return new CourseDetailGetDto(
             course.getId(), course.getTitle(), course.getTeachingLanguage(),
-            course.getPrice(), level, course.getDescription(),
+            course.getPrice(), course.getCourseCategory().getCategoryLevel().toString(),
+            course.getDescription(),
             course.getStartDate(), course.getEndDate(),
             course.getCreatedBy(), course.getCreatedOn(),
             course.getLastModifiedBy(), course.getLastModifiedOn()

@@ -1,20 +1,12 @@
 package com.hub.course_service.service;
 
-import com.hub.course_service.dto.course.CourseDetailGetDto;
-import com.hub.course_service.dto.course.CoursePostDto;
-import com.hub.course_service.model.Course;
 import com.hub.course_service.repository.CourseRepository;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-import static org.mockito.BDDMockito.given;
 
 
 // @SpringBootTest(classes = CourseServiceApplication.class)        // -- Use this annotation for Integration Testing

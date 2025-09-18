@@ -1,9 +1,9 @@
 package com.hub.course_service.model.enumeration;
 
 public enum ResourceType {
+    QUIZ,
     TEXT,
     VIDEO,
-    QUIZ,
     WORD,
     PDF
 }
