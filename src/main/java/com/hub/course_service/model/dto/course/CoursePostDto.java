@@ -3,6 +3,7 @@ package com.hub.course_service.model.dto.course;
 import com.hub.course_service.model.dto.module.CourseModulePostDto;
 import com.hub.course_service.validation.ValidateCoursePrice;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -17,8 +18,6 @@ public record CoursePostDto(
         String description,
         OffsetDateTime startDate,
         OffsetDateTime endDate,
-        List<String> imageUrls,
-
         List<CourseModulePostDto> courseModules
 ) {
 }

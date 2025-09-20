@@ -8,5 +8,6 @@ public final class Constants {
         public static final String END_DATE_MUST_AFTER_START_DATE = "END_DATE_MUST_AFTER_START_DATE";
         public static final String COURSE_MODULE_NOT_FOUND = "COURSE_MODULE_NOT_FOUND";
         public static final String LESSON_NOT_FOUND = "LESSON_NOT_FOUND";
+        public static final String UPLOAD_FILE_FAILED = "UPLOAD_FILE_FAILED";
     }
 }

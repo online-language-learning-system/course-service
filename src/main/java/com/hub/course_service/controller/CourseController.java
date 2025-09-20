@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RestController
@@ -41,9 +42,10 @@ public class CourseController {
 //        return ResponseEntity.ok(courseService.getTrialCourse(pageNo, pageSize, BigDecimal.ZERO));
 //    }
 
-    @PostMapping(path = "/backoffice/courses", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CourseDetailGetDto> createCourse(@RequestBody CoursePostDto coursePostDto) {
-        CourseDetailGetDto courseDetailGetDto = courseService.createCourse(coursePostDto);
+    @PostMapping(value = "/backoffice/courses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CourseDetailGetDto> createCourse(@RequestPart("coursePostDto") CoursePostDto coursePostDto,
+                                                           @RequestPart("multipartFiles") MultipartFile multipartFiles) {
+        CourseDetailGetDto courseDetailGetDto = courseService.createCourse(coursePostDto, multipartFiles);
 
 //        URI uri = uriComponentsBuilder
 //                .replacePath("/courses/{id}")

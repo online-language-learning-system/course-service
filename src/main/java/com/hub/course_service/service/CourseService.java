@@ -13,32 +13,33 @@ import com.hub.course_service.model.dto.module.CourseModulePostDto;
 import com.hub.course_service.model.enumeration.ApprovalStatus;
 import com.hub.course_service.repository.*;
 import com.hub.course_service.utils.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseCategoryRepository courseCategoryRepository;
-    private final CourseImageRepository courseImageRepository;
+    private final CourseImageService courseImageService;
     private final CourseModuleService courseModuleService;
     private final LessonService lessonService;
 
     public CourseService(CourseRepository courseRepository,
                          CourseCategoryRepository courseCategoryRepository,
-                         CourseImageRepository courseImageRepository,
+                         CourseImageService courseImageService,
                          CourseModuleService courseModuleService,
                          LessonService lessonService) {
         this.courseRepository = courseRepository;
         this.courseCategoryRepository = courseCategoryRepository;
-        this.courseImageRepository = courseImageRepository;
+        this.courseImageService = courseImageService;
         this.courseModuleService = courseModuleService;
         this.lessonService = lessonService;
     }
@@ -123,14 +124,12 @@ public class CourseService {
             } catch (RuntimeException e) {
                  rollback transaction
             }
+     * @Transactional - ACID principal
+            Automatically rollback when meeting RuntimeException or Error
+            -- Avoid multiple saving in Repository
      */
     @Transactional
-    /*
-        @Transactional - ACID principal
-        Automatically rollback when meeting RuntimeException or Error
-        -- Avoid multiple saving in Repository
-     */
-    public CourseDetailGetDto createCourse(CoursePostDto coursePostDto) {
+    public CourseDetailGetDto createCourse(CoursePostDto coursePostDto, MultipartFile courseImage) {
 
         Course course = new Course();
 
@@ -156,11 +155,21 @@ public class CourseService {
         // Set Category
         setCourseCategory(coursePostDto.categoryId(), course);
         Course savedMainCourse = courseRepository.save(course);     // Prioritize saving the course first to get its id
+        log.info("Completely set common attribute course");
 
-        // Set Image
-        List<CourseImage> courseImages = setCourseImages(coursePostDto.imageUrls(), savedMainCourse);
+        // Set Image for Course
+//        List<String> imageUrls = new ArrayList<>();
+//        for (MultipartFile file : coursePostDto.multipartFiles()) {
+//            String imageUrl = courseImageService.uploadCourseImage(file);
+//            imageUrls.add(imageUrl);
+//        }
+        String imageUrl = courseImageService.uploadCourseImage(courseImage);
+
+        CourseImage savedMainCourseImage = courseImageService.saveImageUrl(imageUrl, savedMainCourse);
+        List<CourseImage> courseImages = new ArrayList<>();
+        courseImages.add(savedMainCourseImage);
         savedMainCourse.setCourseImages(courseImages);
-        courseImageRepository.saveAll(courseImages);
+        log.info("Completely set image to course");
 
         // Set Module
         for (CourseModulePostDto module : coursePostDto.courseModules()) {
@@ -173,6 +182,7 @@ public class CourseService {
                 LessonDetailGetDto lessonDetailGetDto = lessonService.createLesson(moduleId, lessonPostDto);
             }
         }
+        log.info("Completely set module and lesson to course");
 
         savedMainCourse = courseRepository.save(savedMainCourse);
 
@@ -189,20 +199,6 @@ public class CourseService {
 
         courseCategory.getCourses().add(course);
         courseCategoryRepository.save(courseCategory);
-    }
-
-    private List<CourseImage> setCourseImages(List<String> imageUrls, Course course) {
-        // If the course does not have images yet
-        return imageUrls
-                .stream()
-                .map( url -> {
-                            CourseImage img = new CourseImage();
-                            img.setImageUrl(url);
-                            img.setCourse(course);
-                            return img;
-                        })
-                // .toList();  // Immutable Collection
-                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     // Title Validation
