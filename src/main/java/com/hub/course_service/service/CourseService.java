@@ -4,6 +4,7 @@ import com.hub.common_library.exception.DuplicatedException;
 import com.hub.common_library.exception.InvalidDateRangeException;
 import com.hub.common_library.exception.NotFoundException;
 import com.hub.course_service.model.*;
+import com.hub.course_service.model.dto.course.CourseDetailListGetDto;
 import com.hub.course_service.model.dto.course.CoursePostDto;
 import com.hub.course_service.model.dto.course.CourseDetailGetDto;
 import com.hub.course_service.model.dto.lesson.LessonDetailGetDto;
@@ -14,6 +15,9 @@ import com.hub.course_service.model.enumeration.ApprovalStatus;
 import com.hub.course_service.repository.*;
 import com.hub.course_service.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,76 +48,44 @@ public class CourseService {
         this.lessonService = lessonService;
     }
 
-    //    public CourseDetailGetDto getCourseById(Long id) {
-//
-//        Course course = courseRepository
-//                .findById(id)
-//                .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, id));
-//
-//        Long categoryId = course.getCategoryId().getId();
-//        CourseCategory courseCategory = courseCategoryRepository.findById(course.getCategoryId().getId())
-//                .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.CATEGORY_NOT_FOUND, categoryId))
-//        String level = courseCategory.getCategoryLevel().toString();
-//
-//        return CourseDetailGetDto.fromModel(course, level);
-//    }
+    public CourseDetailListGetDto getPendingCourseList(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Course> coursePage = courseRepository.findCoursesByApprovalStatus(ApprovalStatus.PENDING, pageable);
 
-//
-//    public List<CourseGetDetailDto> getCoursesByName(String courseTitle, int pageNumber, int pageSize) {
-//        if (courseTitle.isEmpty())
-//            return null;
-//
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-//        Page<Course> coursePage = courseRepository.findAllByTitle(courseTitle, pageable);
-//
-//        if (coursePage.hasContent()) {
-//            return coursePage.stream()
-//                    .map(CourseGetDetailDto::fromModel)
-//                    .toList();
-//        } else {
-//            throw new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseTitle);
-//        }
-//    }
+        List<Course> courses = coursePage.getContent();
+        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
+                .map(CourseDetailGetDto::fromModel)
+                .toList();
 
+        return new CourseDetailListGetDto(
+                courseDetailGetDtos,
+                coursePage.getNumber(),
+                coursePage.getSize(),
+                (int) coursePage.getTotalElements(),
+                coursePage.getTotalPages(),
+                coursePage.isLast()
+        );
+    }
 
-//    public CourseListGetDto getCoursesWithFilter(int pageNo, int pageSize, String courseTitle) {
-//
-//        Pageable pageable = PageRequest.of(pageNo, pageSize);
-//        Page<Course> coursePage = courseRepository.findCoursesWithFilter(courseTitle.trim().toLowerCase(), pageable);
-//
-//        List<Course> courses = coursePage.getContent();
-//        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
-//                .map(course -> CourseDetailGetDto.fromModel(course))
-//                .toList();
-//
-//        return new CourseListGetDto(
-//                courseDetailGetDtos,
-//                coursePage.getNumber(),
-//                coursePage.getSize(),
-//                (int) coursePage.getTotalElements(),
-//                coursePage.getTotalPages(),
-//                coursePage.isLast()
-//        );
-//    }
+    public CourseDetailListGetDto getCoursesWithFilter(int pageNo, int pageSize, String courseTitle) {
 
-//    public CourseListGetDto getTrialCourse(int pageNo, int pageSize, BigDecimal price) {
-//        Pageable pageable = PageRequest.of(pageNo, pageSize);
-//        Page<Course> coursePage = courseRepository.findTrialCourse(price, pageable);
-//
-//        List<Course> courses = coursePage.getContent();
-//        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
-//                .map(course -> CourseDetailGetDto.fromModel(course))
-//                .toList();
-//
-//        return new CourseListGetDto(
-//                courseDetailGetDtos,
-//                coursePage.getNumber(),
-//                coursePage.getSize(),
-//                (int) coursePage.getTotalElements(),
-//                coursePage.getTotalPages(),
-//                coursePage.isLast()
-//        );
-//    }
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Course> coursePage = courseRepository.findCoursesWithFilter(courseTitle.trim().toLowerCase(), pageable);
+
+        List<Course> courses = coursePage.getContent();
+        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
+                .map(CourseDetailGetDto::fromModel)
+                .toList();
+
+        return new CourseDetailListGetDto(
+                courseDetailGetDtos,
+                coursePage.getNumber(),
+                coursePage.getSize(),
+                (int) coursePage.getTotalElements(),
+                coursePage.getTotalPages(),
+                coursePage.isLast()
+        );
+    }
 
     /*
      * ORCHESTRATOR
@@ -158,11 +130,6 @@ public class CourseService {
         log.info("Completely set common attribute course");
 
         // Set Image for Course
-//        List<String> imageUrls = new ArrayList<>();
-//        for (MultipartFile file : coursePostDto.multipartFiles()) {
-//            String imageUrl = courseImageService.uploadCourseImage(file);
-//            imageUrls.add(imageUrl);
-//        }
         String imageUrl = courseImageService.uploadCourseImage(courseImage);
 
         CourseImage savedMainCourseImage = courseImageService.saveImageUrl(imageUrl, savedMainCourse);
@@ -187,6 +154,13 @@ public class CourseService {
         savedMainCourse = courseRepository.save(savedMainCourse);
 
         return CourseDetailGetDto.fromModel(savedMainCourse);
+    }
+
+    public void updateCourseApprovalStatus(Long courseId, ApprovalStatus approvalStatus) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseId));
+        course.setApprovalStatus(approvalStatus);
+        courseRepository.save(course);
     }
 
     private void setCourseCategory(Long categoryId, Course course) {

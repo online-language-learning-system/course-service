@@ -33,7 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui", "/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .requestMatchers("/storefront/courses/**", "/storefront/courses/trial").permitAll()
                         .requestMatchers(HttpMethod.POST, "/backoffice/courses").hasAnyRole("lecturer")
-                        .requestMatchers("/backoffice/**").hasAnyRole("lecturer")
+                        .requestMatchers("/backoffice/**").hasRole("admin")
                         .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 ->

@@ -31,12 +31,12 @@ public class CourseImageService {
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
         } else {
-            throw new RuntimeException(Constants.ErrorCode.UPLOAD_FILE_FAILED + response.getStatusCode());
+            throw new RuntimeException(Constants.ErrorCode.UPLOAD_FILE_FAILED + " " + response.getStatusCode());
         }
     }
 
     // Save image url from S3 Bucket to Database
-    public List<CourseImage> saveImageUrl(List<String> imageUrls, Course course) {
+    public List<CourseImage> saveImageUrls(List<String> imageUrls, Course course) {
 
         List<CourseImage> courseImages = imageUrls.stream().map(
             imageUrl -> {

@@ -1,6 +1,7 @@
 package com.hub.course_service.repository;
 
 import com.hub.course_service.model.Course;
+import com.hub.course_service.model.enumeration.ApprovalStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +15,9 @@ import java.math.BigDecimal;
 public interface CourseRepository
         extends JpaRepository<Course, Long> {
 
-    @Query("SELECT entity FROM Course entity WHERE entity.title = :title AND (:title IS NULL OR entity.id != :id)")
+    @Query("SELECT entity FROM Course entity " +
+            "WHERE entity.title = :title " +
+            "AND (:title IS NULL OR entity.id != :id)")
     Course findExistedName(String title, Long id);
 
     @Query("SELECT c FROM Course c "
@@ -22,7 +25,11 @@ public interface CourseRepository
             + "ORDER BY c.id ASC")
     Page<Course> findCoursesWithFilter(@Param("courseTitle") String courseTitle, Pageable pageable);
 
-    @Query("SELECT entity FROM Course entity WHERE entity.price = 0")
+    @Query("SELECT course FROM Course course " +
+            "WHERE course.price = 0")
     Page<Course> findTrialCourse(@Param("price") BigDecimal price, Pageable pageable);
 
+    @Query("SELECT course FROM Course course " +
+            "WHERE course.approvalStatus = :approvalStatus")
+    Page<Course> findCoursesByApprovalStatus(@Param("status") ApprovalStatus approvalStatus, Pageable pageable);
 }

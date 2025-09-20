@@ -1,16 +1,16 @@
 package com.hub.course_service.controller;
 
 import com.hub.course_service.model.dto.course.CourseDetailGetDto;
+import com.hub.course_service.model.dto.course.CourseDetailListGetDto;
 import com.hub.course_service.model.dto.course.CoursePostDto;
+import com.hub.course_service.model.enumeration.ApprovalStatus;
 import com.hub.course_service.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Validated
 @RestController
 public class CourseController {
 
@@ -20,38 +20,36 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-//    @GetMapping("/backoffice/courses/{id}")
-//    public ResponseEntity<CourseDetailGetDto> getCourseDetailById(@PathVariable Long id) {
-//        return ResponseEntity.ok(courseService.getCourseById(id));
-//    }
-//
-//    @GetMapping("/storefront/courses")
-//    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
-//            @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
-//            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-//            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
-//    ) {
-//        return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
-//    }
+    // Get Pending Course
+    @GetMapping(path = "/backoffice/courses/pending")   // ADMIN
+    public ResponseEntity<CourseDetailListGetDto> getPendingCourses(
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return ResponseEntity.ok(courseService.getPendingCourseList(pageNo, pageSize));
+    }
 
-//    @GetMapping("/storefront/courses/trial")
-//    public ResponseEntity<CourseListGetDto> getCoursesByTitle(
-//            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-//            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
-//    ) {
-//        return ResponseEntity.ok(courseService.getTrialCourse(pageNo, pageSize, BigDecimal.ZERO));
-//    }
+    @GetMapping("/storefront/courses")
+    public ResponseEntity<CourseDetailListGetDto> getCoursesByTitle(
+            @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
+    ) {
+        return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
+    }
 
     @PostMapping(value = "/backoffice/courses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CourseDetailGetDto> createCourse(@RequestPart("coursePostDto") CoursePostDto coursePostDto,
                                                            @RequestPart("multipartFiles") MultipartFile multipartFiles) {
         CourseDetailGetDto courseDetailGetDto = courseService.createCourse(coursePostDto, multipartFiles);
-
-//        URI uri = uriComponentsBuilder
-//                .replacePath("/courses/{id}")
-//                .buildAndExpand(course.getId()).toUri();
-
         return new ResponseEntity<>(courseDetailGetDto, HttpStatus.CREATED);
+    }
+
+    @PatchMapping(value = "/backoffice/{courseId}/courses")
+    public ResponseEntity<Void> updateCourseApprovalStatus(@PathVariable(name = "courseId") Long courseId,
+                                                           @RequestParam(name = "approvalStatus") ApprovalStatus approvalStatus) {
+        courseService.updateCourseApprovalStatus(courseId, approvalStatus);
+        return ResponseEntity.noContent().build();
     }
 
 }
