@@ -4,7 +4,8 @@ import com.hub.common_library.exception.DuplicatedException;
 import com.hub.common_library.exception.InvalidDateRangeException;
 import com.hub.common_library.exception.NotFoundException;
 import com.hub.course_service.model.*;
-import com.hub.course_service.model.dto.course.CourseDetailListGetDto;
+import com.hub.course_service.model.dto.course.CourseInfoGetDto;
+import com.hub.course_service.model.dto.course.CourseInfoListGetDto;
 import com.hub.course_service.model.dto.course.CoursePostDto;
 import com.hub.course_service.model.dto.course.CourseDetailGetDto;
 import com.hub.course_service.model.dto.lesson.LessonDetailGetDto;
@@ -48,16 +49,37 @@ public class CourseService {
         this.lessonService = lessonService;
     }
 
-    public CourseDetailListGetDto getPendingCourseList(int pageNumber, int pageSize) {
+    public CourseInfoListGetDto getCoursesWithFilter(String courseTitle, int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Course> coursePage = courseRepository.findCoursesWithFilter(courseTitle.trim().toLowerCase(), pageable);
+
+        List<Course> courses = coursePage.getContent();
+        List<CourseInfoGetDto> courseInfoGetDtos = courses.stream()
+                .map(CourseInfoGetDto::fromModel)
+                .toList();
+
+        return new CourseInfoListGetDto(
+                courseInfoGetDtos,
+                coursePage.getNumber(),
+                coursePage.getSize(),
+                (int) coursePage.getTotalElements(),
+                coursePage.getTotalPages(),
+                coursePage.isLast()
+        );
+    }
+
+    public CourseInfoListGetDto getPendingCourseList(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Course> coursePage = courseRepository.findCoursesByApprovalStatus(ApprovalStatus.PENDING, pageable);
 
         List<Course> courses = coursePage.getContent();
-        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
-                .map(CourseDetailGetDto::fromModel)
-                .toList();
+        List<CourseInfoGetDto> courseDetailGetDtos =
+                courses.stream()
+                    .map(CourseInfoGetDto::fromModel)
+                    .toList();
 
-        return new CourseDetailListGetDto(
+        return new CourseInfoListGetDto(
                 courseDetailGetDtos,
                 coursePage.getNumber(),
                 coursePage.getSize(),
@@ -67,24 +89,10 @@ public class CourseService {
         );
     }
 
-    public CourseDetailListGetDto getCoursesWithFilter(int pageNo, int pageSize, String courseTitle) {
-
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Course> coursePage = courseRepository.findCoursesWithFilter(courseTitle.trim().toLowerCase(), pageable);
-
-        List<Course> courses = coursePage.getContent();
-        List<CourseDetailGetDto> courseDetailGetDtos = courses.stream()
-                .map(CourseDetailGetDto::fromModel)
-                .toList();
-
-        return new CourseDetailListGetDto(
-                courseDetailGetDtos,
-                coursePage.getNumber(),
-                coursePage.getSize(),
-                (int) coursePage.getTotalElements(),
-                coursePage.getTotalPages(),
-                coursePage.isLast()
-        );
+    public CourseDetailGetDto getDetailCourseById(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, id));
+        return CourseDetailGetDto.fromModel(course);
     }
 
     /*
@@ -140,13 +148,12 @@ public class CourseService {
 
         // Set Module
         for (CourseModulePostDto module : coursePostDto.courseModules()) {
-            Long courseId = savedMainCourse.getId();
-            CourseModuleDetailGetDto courseModuleDetailGetDto = courseModuleService.createModule(courseId, module);
+            CourseModule savedMainCourseModule = courseModuleService.createModule(savedMainCourse, module);
 
             // Set Lesson
             for (LessonPostDto lessonPostDto : module.lessons()) {
-                Long moduleId = courseModuleDetailGetDto.id();
-                LessonDetailGetDto lessonDetailGetDto = lessonService.createLesson(moduleId, lessonPostDto);
+                Lesson lesson = lessonService.createLesson(savedMainCourseModule, lessonPostDto);
+                courseModuleService.addLessonToModule(lesson, savedMainCourseModule);
             }
         }
         log.info("Completely set module and lesson to course");

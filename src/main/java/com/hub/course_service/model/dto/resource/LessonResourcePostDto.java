@@ -1,4 +1,4 @@
-package com.hub.course_service.model.dto.lesson;
+package com.hub.course_service.model.dto.resource;
 
 import com.hub.course_service.model.enumeration.ResourceType;
 

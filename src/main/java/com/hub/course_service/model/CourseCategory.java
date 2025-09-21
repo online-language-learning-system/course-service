@@ -1,6 +1,5 @@
 package com.hub.course_service.model;
 
-import com.hub.common_library.model.AbstractAuditEntity;
 import com.hub.course_service.model.enumeration.CategoryLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "course_category", schema = "dbo")
@@ -18,7 +16,7 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseCategory extends AbstractAuditEntity {
+public class CourseCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

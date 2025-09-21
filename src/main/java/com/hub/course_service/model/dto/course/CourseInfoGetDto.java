@@ -7,10 +7,9 @@ import java.math.BigDecimal;
 public record CourseInfoGetDto(
         Long id,
         String title,
-        String teachingLanguage,
         BigDecimal price,
-        String level,
-        String description
+        String teachingLanguage,
+        String level
 ) {
     // Static factory method
     // Constructor
@@ -19,10 +18,9 @@ public record CourseInfoGetDto(
         return new CourseInfoGetDto(
                 course.getId(),
                 course.getTitle(),
-                course.getTeachingLanguage(),
                 course.getPrice(),
-                course.getCourseCategory().getCategoryLevel().toString(),
-                course.getDescription()
+                course.getTeachingLanguage(),
+                course.getCourseCategory().getCategoryLevel().toString()
         );
     }
 }

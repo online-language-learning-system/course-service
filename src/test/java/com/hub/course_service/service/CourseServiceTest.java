@@ -74,7 +74,7 @@ public class CourseServiceTest {
 //        // VALIDATIONS
 //        assertThat(courseDetailGetDto).isNotNull();
 //        assertThat(courseDetailGetDto.title()).isEqualTo(TITLE);
-//        assertThat(courseDetailGetDto.description()).isEqualTo(DESCRIPTION);
+//        assertThat(courseDetailGetDto.shortDescription()).isEqualTo(DESCRIPTION);
 //
 //        verify(courseRepository).findById(any(Long.class));
 //

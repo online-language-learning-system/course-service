@@ -1,7 +1,7 @@
 package com.hub.course_service.controller;
 
 import com.hub.course_service.model.dto.course.CourseDetailGetDto;
-import com.hub.course_service.model.dto.course.CourseDetailListGetDto;
+import com.hub.course_service.model.dto.course.CourseInfoListGetDto;
 import com.hub.course_service.model.dto.course.CoursePostDto;
 import com.hub.course_service.model.enumeration.ApprovalStatus;
 import com.hub.course_service.service.CourseService;
@@ -22,7 +22,7 @@ public class CourseController {
 
     // Get Pending Course
     @GetMapping(path = "/backoffice/courses/pending")   // ADMIN
-    public ResponseEntity<CourseDetailListGetDto> getPendingCourses(
+    public ResponseEntity<CourseInfoListGetDto> getPendingCourses(
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
     ) {
@@ -30,12 +30,17 @@ public class CourseController {
     }
 
     @GetMapping("/storefront/courses")
-    public ResponseEntity<CourseDetailListGetDto> getCoursesByTitle(
+    public ResponseEntity<CourseInfoListGetDto> getCoursesByTitle(
             @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
     ) {
-        return ResponseEntity.ok(courseService.getCoursesWithFilter(pageNo, pageSize, courseTitle));
+        return ResponseEntity.ok(courseService.getCoursesWithFilter(courseTitle, pageNo, pageSize));
+    }
+
+    @GetMapping("/storefront/{courseId}/detail")
+    public ResponseEntity<CourseDetailGetDto> getDetailCourseById(@PathVariable(value = "courseId") Long courseId) {
+        return ResponseEntity.ok(courseService.getDetailCourseById(courseId));
     }
 
     @PostMapping(value = "/backoffice/courses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
