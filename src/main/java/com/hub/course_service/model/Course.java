@@ -1,5 +1,6 @@
 package com.hub.course_service.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hub.common_library.model.AbstractAuditEntity;
 import com.hub.course_service.model.enumeration.ApprovalStatus;
 import jakarta.persistence.*;

@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @FeignClient(
         name = "media-service",
-        url = "http://localhost:9003",
+        url = "${MEDIA_SERVICE:http://localhost:9003}",
         path = "/media-service",
         configuration = MediaServiceClientConfig.class
 )
