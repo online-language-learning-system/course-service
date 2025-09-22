@@ -36,7 +36,7 @@ public class DatabaseAutoConfig {
                 return Optional.of(fullName);
             }
 
-            return Optional.of(auth.getName()); // Returns the name of this principal.
+            return Optional.of(auth.getName()); // Returns the id of this principal.
         };
     }
 

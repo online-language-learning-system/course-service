@@ -11,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 @RestController
 public class CourseController {
 
@@ -44,15 +48,18 @@ public class CourseController {
     }
 
     @PostMapping(value = "/backoffice/courses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CourseDetailGetDto> createCourse(@RequestPart("coursePostDto") CoursePostDto coursePostDto,
-                                                           @RequestPart("multipartFiles") MultipartFile multipartFiles) {
-        CourseDetailGetDto courseDetailGetDto = courseService.createCourse(coursePostDto, multipartFiles);
+    public ResponseEntity<CourseDetailGetDto> createCourse(
+                    @RequestPart(value = "coursePostDto", required = true) CoursePostDto coursePostDto,
+                    @RequestPart(value = "courseImageFile", required = true) MultipartFile courseImageFile,
+                    @RequestPart(value = "resourceFiles", required = false) List<MultipartFile> resourceFiles) {
+        LinkedList<MultipartFile> linkedListFiles = new LinkedList<>(resourceFiles);
+        CourseDetailGetDto courseDetailGetDto = courseService.createCourse(coursePostDto, courseImageFile, linkedListFiles);
         return new ResponseEntity<>(courseDetailGetDto, HttpStatus.CREATED);
     }
 
     @PatchMapping(value = "/backoffice/{courseId}/courses")
-    public ResponseEntity<Void> updateCourseApprovalStatus(@PathVariable(name = "courseId") Long courseId,
-                                                           @RequestParam(name = "approvalStatus") ApprovalStatus approvalStatus) {
+    public ResponseEntity<Void> updateCourseApprovalStatus(@PathVariable(name = "courseId", required = true) Long courseId,
+                                                           @RequestParam(name = "approvalStatus", required = true) ApprovalStatus approvalStatus) {
         courseService.updateCourseApprovalStatus(courseId, approvalStatus);
         return ResponseEntity.noContent().build();
     }

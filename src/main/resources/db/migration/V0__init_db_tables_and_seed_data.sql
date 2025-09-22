@@ -27,7 +27,7 @@ BEGIN
         price                   DECIMAL(9, 0) NOT NULL,
         description             NVARCHAR(255) NOT NULL,
         startDate               DATETIMEOFFSET NOT NULL,
-        endDate                 DATETIMEOFFSET NOT NULL,,
+        endDate                 DATETIMEOFFSET NOT NULL,
         approvalStatus          NVARCHAR(20) NOT NULL,
         created_by              NVARCHAR(100) NOT NULL,
         created_on              DATETIMEOFFSET NOT NULL,
@@ -79,6 +79,18 @@ BEGIN
         created_on            DATETIMEOFFSET NOT NULL,
         last_modified_by      NVARCHAR(100) NOT NULL,
         last_modified_on      DATETIMEOFFSET NOT NULL
+    )
+END;
+GO
+
+-- LESSON RESOURCE TABLE
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.lesson_resource') AND type = 'U')
+BEGIN
+    CREATE TABLE dbo.lesson_resource (
+        id                    BIGINT NOT NULL PRIMARY KEY,
+        lesson_id             BIGINT NOT NULL FOREIGN KEY,
+        resource_type         NVARCHAR(10) NOT NULL,
+        resource_url          NVARCHAR(255) NULL
     )
 END;
 GO

@@ -22,6 +22,7 @@ public interface CourseRepository
 
     @Query("SELECT c FROM Course c "
             + "WHERE LOWER(c.title) LIKE %:courseTitle% "
+            + "AND (c.approvalStatus = APPROVED)"
             + "ORDER BY c.id ASC")
     Page<Course> findCoursesWithFilter(@Param("courseTitle") String courseTitle, Pageable pageable);
 
@@ -32,4 +33,5 @@ public interface CourseRepository
     @Query("SELECT course FROM Course course " +
             "WHERE course.approvalStatus = :approvalStatus")
     Page<Course> findCoursesByApprovalStatus(@Param("status") ApprovalStatus approvalStatus, Pageable pageable);
+
 }

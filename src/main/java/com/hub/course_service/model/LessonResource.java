@@ -27,7 +27,7 @@ public class LessonResource {
     @Column(name = "resource_type")
     private ResourceType resourceType;
 
-    @Column(name = "resource_url")
+    @Column(name = "resource_url", nullable = false)
     private String resourceUrl;
 
 }

@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
@@ -109,22 +110,20 @@ public class CourseService {
             -- Avoid multiple saving in Repository
      */
     @Transactional
-    public CourseDetailGetDto createCourse(CoursePostDto coursePostDto, MultipartFile courseImage) {
-
+    public CourseDetailGetDto createCourse(CoursePostDto coursePostDto,
+                                           MultipartFile courseImage,
+                                           LinkedList<MultipartFile> resourceFiles) {
         Course course = new Course();
 
-        // Title Validation
+        // Set common information of course
         validateDuplicateTitle(coursePostDto.title(), null);
         course.setTitle(coursePostDto.title());
+        course.setTeachingLanguage(coursePostDto.teachingLanguage());
+        course.setPrice(coursePostDto.price());
 
-        // Date Range Validation
         validateEndDateMustGreaterThanStartDate(coursePostDto);
         course.setStartDate(coursePostDto.startDate());
         course.setEndDate(coursePostDto.endDate());
-
-        // Remaining attributes of the Course
-        course.setTeachingLanguage(coursePostDto.teachingLanguage());
-        course.setPrice(coursePostDto.price());
 
         if (!coursePostDto.description().isEmpty())
             course.setDescription(coursePostDto.description());
@@ -132,10 +131,12 @@ public class CourseService {
         ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
         course.setApprovalStatus(approvalStatus);
 
-        // Set Category
+        // Course categories
         setCourseCategory(coursePostDto.categoryId(), course);
-        Course savedMainCourse = courseRepository.save(course);     // Prioritize saving the course first to get its id
-        log.info("Completely set common attribute course");
+
+        // Prioritize saving the course first to get its id
+        Course savedMainCourse = courseRepository.save(course);
+        log.info("COURSE SERVICE: Completely set common information of course");
 
         // Set Image for Course
         String imageUrl = courseImageService.uploadCourseImage(courseImage);
@@ -144,7 +145,7 @@ public class CourseService {
         List<CourseImage> courseImages = new ArrayList<>();
         courseImages.add(savedMainCourseImage);
         savedMainCourse.setCourseImages(courseImages);
-        log.info("Completely set image to course");
+        log.info("COURSE SERVICE: Completely set image to course");
 
         // Set Module
         for (CourseModulePostDto module : coursePostDto.courseModules()) {
@@ -152,11 +153,11 @@ public class CourseService {
 
             // Set Lesson
             for (LessonPostDto lessonPostDto : module.lessons()) {
-                Lesson lesson = lessonService.createLesson(savedMainCourseModule, lessonPostDto);
+                Lesson lesson = lessonService.createLesson(savedMainCourseModule, lessonPostDto, resourceFiles);
                 courseModuleService.addLessonToModule(lesson, savedMainCourseModule);
             }
         }
-        log.info("Completely set module and lesson to course");
+        log.info("COURSE SERVICE: Completely set module and lesson to course");
 
         savedMainCourse = courseRepository.save(savedMainCourse);
 
