@@ -8,9 +8,7 @@ import com.hub.course_service.model.dto.course.CourseInfoGetDto;
 import com.hub.course_service.model.dto.course.CourseInfoListGetDto;
 import com.hub.course_service.model.dto.course.CoursePostDto;
 import com.hub.course_service.model.dto.course.CourseDetailGetDto;
-import com.hub.course_service.model.dto.lesson.LessonDetailGetDto;
 import com.hub.course_service.model.dto.lesson.LessonPostDto;
-import com.hub.course_service.model.dto.module.CourseModuleDetailGetDto;
 import com.hub.course_service.model.dto.module.CourseModulePostDto;
 import com.hub.course_service.model.enumeration.ApprovalStatus;
 import com.hub.course_service.repository.*;
@@ -23,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -51,43 +50,21 @@ public class CourseService {
     }
 
     public CourseInfoListGetDto getCoursesWithFilter(String courseTitle, int pageNo, int pageSize) {
-
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Course> coursePage = courseRepository.findCoursesWithFilter(courseTitle.trim().toLowerCase(), pageable);
+        return toCourseInfoListGetDto(coursePage);
+    }
 
-        List<Course> courses = coursePage.getContent();
-        List<CourseInfoGetDto> courseInfoGetDtos = courses.stream()
-                .map(CourseInfoGetDto::fromModel)
-                .toList();
-
-        return new CourseInfoListGetDto(
-                courseInfoGetDtos,
-                coursePage.getNumber(),
-                coursePage.getSize(),
-                (int) coursePage.getTotalElements(),
-                coursePage.getTotalPages(),
-                coursePage.isLast()
-        );
+    public CourseInfoListGetDto getFreeCourse(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Course> coursePage = courseRepository.findFreeCourse(BigDecimal.ZERO, pageable);
+        return toCourseInfoListGetDto(coursePage);
     }
 
     public CourseInfoListGetDto getPendingCourseList(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Course> coursePage = courseRepository.findCoursesByApprovalStatus(ApprovalStatus.PENDING, pageable);
-
-        List<Course> courses = coursePage.getContent();
-        List<CourseInfoGetDto> courseDetailGetDtos =
-                courses.stream()
-                    .map(CourseInfoGetDto::fromModel)
-                    .toList();
-
-        return new CourseInfoListGetDto(
-                courseDetailGetDtos,
-                coursePage.getNumber(),
-                coursePage.getSize(),
-                (int) coursePage.getTotalElements(),
-                coursePage.getTotalPages(),
-                coursePage.isLast()
-        );
+        return toCourseInfoListGetDto(coursePage);
     }
 
     public CourseDetailGetDto getDetailCourseById(Long id) {
@@ -203,6 +180,22 @@ public class CourseService {
         if (!checkDateRange(coursePostDto.startDate(), coursePostDto.endDate())) {
             throw new InvalidDateRangeException(Constants.ErrorCode.END_DATE_MUST_AFTER_START_DATE);
         }
+    }
+
+    private CourseInfoListGetDto toCourseInfoListGetDto(Page<Course> coursePage) {
+        List<CourseInfoGetDto> courseInfoGetDtos = coursePage.getContent()
+                .stream()
+                .map(CourseInfoGetDto::fromModel)
+                .toList();
+
+        return new CourseInfoListGetDto(
+                courseInfoGetDtos,
+                coursePage.getNumber(),
+                coursePage.getSize(),
+                (int) coursePage.getTotalElements(),
+                coursePage.getTotalPages(),
+                coursePage.isLast()
+        );
     }
 
 }

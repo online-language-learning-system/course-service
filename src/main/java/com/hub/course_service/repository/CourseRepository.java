@@ -28,7 +28,7 @@ public interface CourseRepository
 
     @Query("SELECT course FROM Course course " +
             "WHERE course.price = 0")
-    Page<Course> findTrialCourse(@Param("price") BigDecimal price, Pageable pageable);
+    Page<Course> findFreeCourse(@Param("price") BigDecimal price, Pageable pageable);
 
     @Query("SELECT course FROM Course course " +
             "WHERE course.approvalStatus = :approvalStatus")

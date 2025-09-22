@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +32,15 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getPendingCourseList(pageNo, pageSize));
     }
 
-    @GetMapping("/storefront/courses")
+    @GetMapping(path = "/storefront/courses/free")
+    public ResponseEntity<CourseInfoListGetDto> getFreeCourse(
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
+        return ResponseEntity.ok(courseService.getFreeCourse(pageNo, pageSize));
+    }
+
+    @GetMapping(path = "/storefront/courses")
     public ResponseEntity<CourseInfoListGetDto> getCoursesByTitle(
             @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
@@ -52,7 +59,10 @@ public class CourseController {
                     @RequestPart(value = "coursePostDto", required = true) CoursePostDto coursePostDto,
                     @RequestPart(value = "courseImageFile", required = true) MultipartFile courseImageFile,
                     @RequestPart(value = "resourceFiles", required = false) List<MultipartFile> resourceFiles) {
+
+        // Using LinkedList for getFirst/removeFirst
         LinkedList<MultipartFile> linkedListFiles = new LinkedList<>(resourceFiles);
+
         CourseDetailGetDto courseDetailGetDto = courseService.createCourse(coursePostDto, courseImageFile, linkedListFiles);
         return new ResponseEntity<>(courseDetailGetDto, HttpStatus.CREATED);
     }
