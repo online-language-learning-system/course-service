@@ -5,7 +5,7 @@ BEGIN
 END;
 GO
 
--- COURSE CATEGORY TABLE
+-- COURSE CATEGORY TABLE AND INIT DATA
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.course_category') AND type = 'U')
 BEGIN
     CREATE TABLE dbo.course_category (
@@ -13,6 +13,29 @@ BEGIN
         category_level      NVARCHAR(5) NOT NULL,
         description         NVARCHAR(255) NOT NULL
     );
+
+    INSERT INTO dbo.course_category (category_level, description)
+    VALUES ((N'N5', N"Cơ bản sơ cấp:" + CHAR(13) + CHAR(10) +
+                    N"Hiểu và sử dụng các cụm từ, câu cơ bản trong tiếng Nhật. " +
+                    N"Đọc và nhận biết hiragana, katakana, và một số kanji rất đơn giản. " +
+                    N"Giới thiệu bản thân, hỏi những câu đơn giản, và tham gia các cuộc trò chuyện ngắn hàng ngày."),
+
+            (N'N4', N"Sơ cấp trên:" + CHAR(13) + CHAR(10) +
+                    N"Hiểu các cuộc trò chuyện cơ bản nói chậm trong đời sống hàng ngày. " +
+                    N"Đọc và hiểu các câu cơ bản sử dụng từ vựng và kanji phổ biến. " +
+                    N"Thực hiện giao tiếp đơn giản trong cuộc sống thường nhật."),
+
+            (N'N3', N"Trung cấp:" + CHAR(13) + CHAR(10) +
+                    N"Hiểu các tình huống hàng ngày với các cuộc trò chuyện phức tạp hơn. " +
+                    N"Đọc các văn bản có nội dung cụ thể như tiêu đề, bài luận, hoặc thư từ."),
+
+            (N'N2', N"Trung cấp cao:" + CHAR(13) + CHAR(10) +
+                    N"Hiểu các chủ đề chung và các cuộc trò chuyện chi tiết với tốc độ tự nhiên. " +
+                    N"Đọc báo chí, bài xã luận, tạp chí và các bài viết chuyên sâu."),
+
+            (N'N1', N"Nâng cao:" + CHAR(13) + CHAR(10) +
+                    N"Hiểu tiếng Nhật trong nhiều bối cảnh khác nhau, bao gồm các chủ đề trừu tượng hoặc phức tạp. " +
+                    N"Đọc và hiểu các văn bản nâng cao như tài liệu học thuật và tác phẩm văn học.");
 END;
 GO
 
