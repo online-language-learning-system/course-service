@@ -1,5 +1,6 @@
 package com.hub.course_service.service;
 
+import com.hub.common_library.exception.NotFoundException;
 import com.hub.course_service.client.MediaServiceClient;
 import com.hub.course_service.model.Course;
 import com.hub.course_service.model.CourseImage;
@@ -22,6 +23,22 @@ public class CourseImageService {
                               CourseImageRepository courseImageRepository) {
         this.mediaServiceClient = mediaServiceClient;
         this.courseImageRepository = courseImageRepository;
+    }
+
+    // Get image file from S3 Bucket by Presigned Url
+    public String getPresignedImageUrlByCourseId(Long courseId) {
+        CourseImage courseImage = courseImageRepository.findByCourseId(courseId)
+                .orElseThrow(
+                    () -> new NotFoundException(Constants.ErrorCode.COURSE_IMAGE_NOT_FOUND, courseId)
+                );
+
+        ResponseEntity<String> presignedImageUrl = mediaServiceClient.getFileFromPresignedUrl(courseImage.getImageUrl());
+
+        if (presignedImageUrl.getStatusCode().is2xxSuccessful()) {
+            return presignedImageUrl.getBody();
+        } else {
+            throw new NotFoundException(Constants.ErrorCode.COURSE_IMAGE_NOT_FOUND);
+        }
     }
 
     // Upload image file to S3 Bucket
@@ -66,5 +83,14 @@ public class CourseImageService {
         courseImageRepository.save(courseImage);
         return courseImage;
     }
+
+//    private String toImageName(Long imageId) {
+//        CourseImage courseImage = courseImageRepository.findById(imageId)
+//                .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_IMAGE_NOT_FOUND, imageId));
+//
+//        String imageUrl = courseImage.getImageUrl();
+//        int forwardSlashIndex = imageUrl.lastIndexOf("/");
+//        return imageUrl.substring(forwardSlashIndex + 1);
+//    }
 
 }

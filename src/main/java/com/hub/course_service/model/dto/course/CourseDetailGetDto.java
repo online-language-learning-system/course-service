@@ -28,9 +28,11 @@ public record CourseDetailGetDto(
         String createdBy,
         OffsetDateTime createOn,
         String lastModifiedBy,
-        OffsetDateTime lastModifiedOn
+        OffsetDateTime lastModifiedOn,
+
+        String imagePresignedUrl
 ) {
-    public static CourseDetailGetDto fromModel(Course course) {
+    public static CourseDetailGetDto fromModel(Course course, String imagePresignedUrl) {
 
         return new CourseDetailGetDto(
             course.getId(),
@@ -54,7 +56,9 @@ public record CourseDetailGetDto(
             course.getCreatedBy(),
             course.getCreatedOn(),
             course.getLastModifiedBy(),
-            course.getLastModifiedOn()
+            course.getLastModifiedOn(),
+
+            imagePresignedUrl
         );
 
     }

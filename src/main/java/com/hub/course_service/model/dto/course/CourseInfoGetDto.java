@@ -9,18 +9,20 @@ public record CourseInfoGetDto(
         String title,
         BigDecimal price,
         String teachingLanguage,
-        String level
+        String level,
+        String imagePresignedUrl
 ) {
     // Static factory method
     // Constructor
     // Builder
-    public static CourseInfoGetDto fromModel(Course course) {
+    public static CourseInfoGetDto fromModel(Course course, String imagePresignedUrl) {
         return new CourseInfoGetDto(
-                course.getId(),
-                course.getTitle(),
-                course.getPrice(),
-                course.getTeachingLanguage(),
-                course.getCourseCategory().getCategoryLevel().toString()
+            course.getId(),
+            course.getTitle(),
+            course.getPrice(),
+            course.getTeachingLanguage(),
+            course.getCourseCategory().getCategoryLevel().toString(),
+            imagePresignedUrl
         );
     }
 }

@@ -23,6 +23,6 @@ public class CourseImage {
     private Course course;
 
     @Column(nullable = false, name = "image_url")
-    private String imageUrl;
+    private String imageUrl;            // key in S3 bucket
 
 }

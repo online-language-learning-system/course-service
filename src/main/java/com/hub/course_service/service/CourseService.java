@@ -70,18 +70,12 @@ public class CourseService {
     public CourseDetailGetDto getDetailCourseById(Long id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, id));
-        return CourseDetailGetDto.fromModel(course);
+        String imagePresignedUrl = courseImageService.getPresignedImageUrlByCourseId(course.getId());
+        return CourseDetailGetDto.fromModel(course, imagePresignedUrl);
     }
 
     /*
      * ORCHESTRATOR
-           try {
-                 start transaction
-                 call intercepted method
-                 commit transaction
-            } catch (RuntimeException e) {
-                 rollback transaction
-            }
      * @Transactional - ACID principal
             Automatically rollback when meeting RuntimeException or Error
             -- Avoid multiple saving in Repository
@@ -138,7 +132,7 @@ public class CourseService {
 
         savedMainCourse = courseRepository.save(savedMainCourse);
 
-        return CourseDetailGetDto.fromModel(savedMainCourse);
+        return CourseDetailGetDto.fromModel(savedMainCourse, null);
     }
 
     public void updateCourseApprovalStatus(Long courseId, ApprovalStatus approvalStatus) {
@@ -160,7 +154,7 @@ public class CourseService {
         courseCategoryRepository.save(courseCategory);
     }
 
-    // Title Validation
+    // Course Title Validation
     private boolean checkExistedTitle(String title, Long id) {
         return courseRepository.findExistedName(title, id) != null;
     }
@@ -185,7 +179,10 @@ public class CourseService {
     private CourseInfoListGetDto toCourseInfoListGetDto(Page<Course> coursePage) {
         List<CourseInfoGetDto> courseInfoGetDtos = coursePage.getContent()
                 .stream()
-                .map(CourseInfoGetDto::fromModel)
+                .map(course -> {
+                    String imagePresignedUrl = courseImageService.getPresignedImageUrlByCourseId(course.getId());
+                    return CourseInfoGetDto.fromModel(course, imagePresignedUrl);
+                })
                 .toList();
 
         return new CourseInfoListGetDto(
