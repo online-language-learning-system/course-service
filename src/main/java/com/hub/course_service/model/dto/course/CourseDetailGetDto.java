@@ -28,9 +28,7 @@ public record CourseDetailGetDto(
         String createdBy,
         OffsetDateTime createOn,
         String lastModifiedBy,
-        OffsetDateTime lastModifiedOn,
-
-        String imagePresignedUrl
+        OffsetDateTime lastModifiedOn
 ) {
     public static CourseDetailGetDto fromModel(Course course, String imagePresignedUrl) {
 
@@ -46,19 +44,19 @@ public record CourseDetailGetDto(
             course.getEndDate(),
             course.getCourseModules().stream()
 
-                .map(courseModule -> CourseModuleDetailGetDto.fromModel(courseModule))
+                .map(CourseModuleDetailGetDto::fromModel)
                 .collect(Collectors.toList()),
 
             course.getCourseImages().stream()
-                    .map(image -> {return CourseImageDetailGetDto.fromModel(image);})
+                    .map(image ->
+                            CourseImageDetailGetDto.fromModel(image, imagePresignedUrl)
+                    )
                     .collect(Collectors.toList()),
 
             course.getCreatedBy(),
             course.getCreatedOn(),
             course.getLastModifiedBy(),
-            course.getLastModifiedOn(),
-
-            imagePresignedUrl
+            course.getLastModifiedOn()
         );
 
     }
