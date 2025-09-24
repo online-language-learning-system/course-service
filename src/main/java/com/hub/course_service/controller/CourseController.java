@@ -8,6 +8,7 @@ import com.hub.course_service.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,6 +55,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getDetailCourseById(courseId));
     }
 
+    @PreAuthorize("hasAnyRole('admin', 'lecture')")
     @PostMapping(value = "/backoffice/courses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CourseDetailGetDto> createCourse(
                     @RequestPart(value = "coursePostDto", required = true) CoursePostDto coursePostDto,

@@ -3,7 +3,6 @@ package com.hub.course_service.config;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,8 +29,7 @@ public class SecurityConfig {
                 author ->
                     author
                         .requestMatchers("/swagger-ui", "/swagger-ui/**","/v3/api-docs/**").permitAll()
-                        .requestMatchers("/storefront/courses/**", "/storefront/courses/trial").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/backoffice/courses").hasAnyRole("lecturer")
+                        .requestMatchers("/storefront/**").permitAll()
                         .requestMatchers("/backoffice/**").hasRole("admin")
                         .anyRequest().authenticated()
             )
