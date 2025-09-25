@@ -14,7 +14,16 @@ public record ResourceDetailGetDto(
                 lessonResource.getId(),
                 lessonResource.getLesson().getId(),
                 lessonResource.getResourceType(),
-                lessonResource.getResourceUrl()
+                null
+        );
+    }
+
+    public static ResourceDetailGetDto fromModel(LessonResource lessonResource, String resourceUrl) {
+        return new ResourceDetailGetDto(
+                lessonResource.getId(),
+                lessonResource.getLesson().getId(),
+                lessonResource.getResourceType(),
+                resourceUrl
         );
     }
 }

@@ -30,6 +30,7 @@ public class SecurityConfig {
                     author
                         .requestMatchers("/swagger-ui", "/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .requestMatchers("/storefront/**").permitAll()
+                        .requestMatchers("/backoffice/courses").hasRole("lecturer")
                         .requestMatchers("/backoffice/**").hasRole("admin")
                         .anyRequest().authenticated()
             )

@@ -36,22 +36,39 @@ public class CourseService {
     private final CourseImageService courseImageService;
     private final CourseModuleService courseModuleService;
     private final LessonService lessonService;
+    private final LessonResourceService lessonResourceService;
 
     public CourseService(CourseRepository courseRepository,
                          CourseCategoryRepository courseCategoryRepository,
                          CourseImageService courseImageService,
+                         LessonService lessonService,
                          CourseModuleService courseModuleService,
-                         LessonService lessonService) {
+                         LessonResourceService lessonResourceService) {
         this.courseRepository = courseRepository;
         this.courseCategoryRepository = courseCategoryRepository;
         this.courseImageService = courseImageService;
         this.courseModuleService = courseModuleService;
         this.lessonService = lessonService;
+        this.lessonResourceService = lessonResourceService;
     }
 
-    public CourseInfoListGetDto getCoursesWithFilter(String courseTitle, int pageNo, int pageSize) {
+    public CourseInfoListGetDto getCoursesByMultiQuery(
+            int pageNo,
+            int pageSize,
+            String courseTitle,
+            Long categoryId,
+            BigDecimal startPrice,
+            BigDecimal endPrice
+    ) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Course> coursePage = courseRepository.findCoursesWithFilter(courseTitle.trim().toLowerCase(), pageable);
+        Page<Course> coursePage =
+                courseRepository.findCoursesByCourseNameAndCategoryIdAndPriceBetween(
+                        courseTitle.trim().toLowerCase(),
+                        categoryId,
+                        startPrice,
+                        endPrice,
+                        pageable
+                );
         return toCourseInfoListGetDto(coursePage);
     }
 
@@ -71,6 +88,7 @@ public class CourseService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, id));
         String imagePresignedUrl = courseImageService.getPresignedImageUrlByCourseId(course.getId());
+
         return CourseDetailGetDto.fromModel(course, imagePresignedUrl);
     }
 

@@ -44,7 +44,7 @@ public record CourseDetailGetDto(
             course.getEndDate(),
             course.getCourseModules().stream()
 
-                .map(CourseModuleDetailGetDto::fromModel)
+                .map(courseModule -> CourseModuleDetailGetDto.fromModel(courseModule))
                 .collect(Collectors.toList()),
 
             course.getCourseImages().stream()

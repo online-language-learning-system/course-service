@@ -8,10 +8,10 @@ import com.hub.course_service.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class CourseController {
     @GetMapping(path = "/backoffice/courses/pending")   // ADMIN
     public ResponseEntity<CourseInfoListGetDto> getPendingCourses(
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
     ) {
         return ResponseEntity.ok(courseService.getPendingCourseList(pageNo, pageSize));
     }
@@ -36,18 +36,30 @@ public class CourseController {
     @GetMapping(path = "/storefront/courses/free")
     public ResponseEntity<CourseInfoListGetDto> getFreeCourse(
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
     ) {
         return ResponseEntity.ok(courseService.getFreeCourse(pageNo, pageSize));
     }
 
     @GetMapping(path = "/storefront/courses")
-    public ResponseEntity<CourseInfoListGetDto> getCoursesByTitle(
-            @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
+    public ResponseEntity<CourseInfoListGetDto> getCoursesByMultiQuery(
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize
+            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize,
+            @RequestParam(name = "courseTitle", defaultValue = "", required = false) String courseTitle,
+            @RequestParam(name = "categoryId", defaultValue = "", required = false) Long categoryId,
+            @RequestParam(name = "startPrice", defaultValue = "", required = false) BigDecimal startPrice,
+            @RequestParam(name = "endPrice", defaultValue = "", required = false) BigDecimal endPrice
     ) {
-        return ResponseEntity.ok(courseService.getCoursesWithFilter(courseTitle, pageNo, pageSize));
+        return ResponseEntity.ok(
+            courseService.getCoursesByMultiQuery(
+                    pageNo,
+                    pageSize,
+                    courseTitle,
+                    categoryId,
+                    startPrice,
+                    endPrice
+            )
+        );
     }
 
     @GetMapping("/storefront/{courseId}/detail")
@@ -55,7 +67,6 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getDetailCourseById(courseId));
     }
 
-    @PreAuthorize("hasAnyRole('admin', 'lecture')")
     @PostMapping(value = "/backoffice/courses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CourseDetailGetDto> createCourse(
                     @RequestPart(value = "coursePostDto", required = true) CoursePostDto coursePostDto,

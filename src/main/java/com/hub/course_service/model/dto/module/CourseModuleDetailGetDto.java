@@ -1,6 +1,7 @@
 package com.hub.course_service.model.dto.module;
 
 import com.hub.course_service.model.CourseModule;
+import com.hub.course_service.model.Lesson;
 import com.hub.course_service.model.dto.lesson.LessonDetailGetDto;
 
 import java.util.List;
@@ -13,9 +14,16 @@ public record CourseModuleDetailGetDto(
         String description,
         int orderIndex,
         boolean canFreeTrial,
-        List<LessonDetailGetDto> lessons
+        List<String> lessons
 ) {
     public static CourseModuleDetailGetDto fromModel(CourseModule courseModule) {
+
+//        List<LessonDetailGetDto> lessons = courseModule.isCanFreeTrial()
+//                ? courseModule.getLessons().stream()
+//                .map(lesson -> LessonDetailGetDto.fromModel(lesson))
+//                .collect(Collectors.toList())
+//                : List.of();
+
         return new CourseModuleDetailGetDto(
                 courseModule.getId(),
                 courseModule.getCourse().getId(),
@@ -23,9 +31,10 @@ public record CourseModuleDetailGetDto(
                 courseModule.getDescription(),
                 courseModule.getOrderIndex(),
                 courseModule.isCanFreeTrial(),
-                courseModule.getLessons().stream()
-                        .map(lesson -> { return LessonDetailGetDto.fromModel(lesson); })
-                        .collect(Collectors.toList())
+                courseModule.getLessons().stream().map(
+                    lesson -> lesson.getTitle()
+                ).collect(Collectors.toList())
         );
     }
+
 }

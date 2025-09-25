@@ -2,23 +2,37 @@ package com.hub.course_service.service;
 
 import com.hub.course_service.model.Course;
 import com.hub.course_service.model.Lesson;
+import com.hub.course_service.model.dto.module.CourseModuleDetailGetDto;
 import com.hub.course_service.model.dto.module.CourseModulePostDto;
 import com.hub.course_service.model.CourseModule;
 import com.hub.course_service.repository.CourseModuleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CourseModuleService {
 
     private final CourseModuleRepository courseModuleRepository;
+    private final LessonService lessonService;
+    private final LessonResourceService lessonResourceService;
 
-    public CourseModuleService(CourseModuleRepository courseModuleRepository) {
+    public CourseModuleService(CourseModuleRepository courseModuleRepository,
+                               LessonService lessonService,
+                               LessonResourceService lessonResourceService) {
         this.courseModuleRepository = courseModuleRepository;
+        this.lessonService = lessonService;
+        this.lessonResourceService = lessonResourceService;
     }
 
-//    public CourseModuleDetailGetDto getDetailModuleByCourseId(Long courseId) {
-//
-//    }
+    public List<CourseModuleDetailGetDto> getAllModuleByCourseId(Long courseId) {
+        List<CourseModule> courseModules = courseModuleRepository.findAllByCourseId(courseId);
+
+        return courseModules.stream().map(
+                courseModule -> CourseModuleDetailGetDto.fromModel(courseModule)
+        ).collect(Collectors.toList());
+    }
 
     public CourseModule createModule(Course course, CourseModulePostDto courseModulePostDto) {
         CourseModule courseModule = new CourseModule();

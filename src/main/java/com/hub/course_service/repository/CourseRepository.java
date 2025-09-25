@@ -15,16 +15,23 @@ import java.math.BigDecimal;
 public interface CourseRepository
         extends JpaRepository<Course, Long> {
 
-    @Query("SELECT entity FROM Course entity " +
-            "WHERE entity.title = :title " +
-            "AND (:title IS NULL OR entity.id != :id)")
-    Course findExistedName(String title, Long id);
+    @Query("SELECT course FROM Course course " +
+            "WHERE course.title = :courseTitle " +
+            "AND (:courseTitle IS NULL OR course.id != :courseId)")
+    Course findExistedName(@Param("courseTitle") String courseTitle, @Param("courseId") Long courseId);
 
-    @Query("SELECT c FROM Course c "
-            + "WHERE LOWER(c.title) LIKE %:courseTitle% "
-            + "AND (c.approvalStatus = APPROVED)"
-            + "ORDER BY c.id ASC")
-    Page<Course> findCoursesWithFilter(@Param("courseTitle") String courseTitle, Pageable pageable);
+    @Query("SELECT course FROM Course course LEFT JOIN course.courseCategory category "
+            + "WHERE LOWER(course.title) LIKE CONCAT('%', :courseTitle, '%') "
+            + "AND (category.id = :categoryId OR :categoryId IS NULL) "
+            + "AND (:startPrice <= course.price OR :startPrice IS NULL) "
+            + "AND (course.price <= :endPrice OR :endPrice IS NULL) "
+            + "AND course.approvalStatus = 'APPROVED' "
+            + "ORDER BY course.id ASC")
+    Page<Course> findCoursesByCourseNameAndCategoryIdAndPriceBetween(@Param("courseTitle") String courseTitle,
+                                                                     @Param("categoryId") Long categoryId,
+                                                                     @Param("startPrice") BigDecimal startPrice,
+                                                                     @Param("endPrice") BigDecimal endPrice,
+                                                                     Pageable pageable);
 
     @Query("SELECT course FROM Course course " +
             "WHERE course.price = 0")
@@ -32,6 +39,6 @@ public interface CourseRepository
 
     @Query("SELECT course FROM Course course " +
             "WHERE course.approvalStatus = :approvalStatus")
-    Page<Course> findCoursesByApprovalStatus(@Param("status") ApprovalStatus approvalStatus, Pageable pageable);
+    Page<Course> findCoursesByApprovalStatus(@Param("approvalStatus") ApprovalStatus approvalStatus, Pageable pageable);
 
 }

@@ -14,7 +14,7 @@ public record LessonDetailGetDto(
         Integer duration,
         List<ResourceDetailGetDto> resources
 ) {
-    public static LessonDetailGetDto fromModel(Lesson lesson) {
+    public static LessonDetailGetDto fromModel(Lesson lesson, String resourceUrl) {
         return new LessonDetailGetDto(
                 lesson.getId(),
                 lesson.getCourseModule().getId(),
@@ -24,7 +24,7 @@ public record LessonDetailGetDto(
                 lesson.getLessonResources().stream()
                     .map(
                         lessonResource -> {
-                            return ResourceDetailGetDto.fromModel(lessonResource);
+                            return ResourceDetailGetDto.fromModel(lessonResource, resourceUrl);
                         }
                     ).collect(Collectors.toList())
         );
