@@ -1,11 +1,13 @@
 package com.hub.course_service.service;
 
-import com.hub.course_service.client.MediaServiceClient;
+import com.hub.common_library.exception.NotFoundException;
+import com.hub.course_service.feignclient.MediaServiceClient;
 import com.hub.course_service.model.CourseModule;
 import com.hub.course_service.model.Lesson;
 import com.hub.course_service.model.LessonResource;
 import com.hub.course_service.model.dto.lesson.LessonDetailGetDto;
 import com.hub.course_service.model.dto.lesson.LessonPostDto;
+import com.hub.course_service.model.dto.lesson.LessonPatchDto;
 import com.hub.course_service.model.dto.resource.ResourceDetailGetDto;
 import com.hub.course_service.model.enumeration.ResourceType;
 import com.hub.course_service.repository.LessonRepository;
@@ -21,15 +23,21 @@ import java.util.stream.Collectors;
 @Service
 public class LessonService {
 
+    private final CourseService courseService;
+    private final CourseModuleService courseModuleService;
     private final MediaServiceClient mediaServiceClient;
     private final LessonRepository lessonRepository;
     private final LessonResourceService lessonResourceService;
     private final LessonResourceRepository lessonResourceRepository;
 
-    public LessonService(MediaServiceClient mediaServiceClient,
+    public LessonService(CourseService courseService,
+                         CourseModuleService courseModuleService,
+                         MediaServiceClient mediaServiceClient,
                          LessonRepository lessonRepository,
                          LessonResourceService lessonResourceService,
                          LessonResourceRepository lessonResourceRepository) {
+        this.courseService = courseService;
+        this.courseModuleService = courseModuleService;
         this.mediaServiceClient = mediaServiceClient;
         this.lessonRepository = lessonRepository;
         this.lessonResourceRepository = lessonResourceRepository;
@@ -69,12 +77,7 @@ public class LessonService {
 
         for (Lesson lesson : lessons) {
 
-            List<ResourceDetailGetDto> resourceDetailGetDtos = lesson.getLessonResources().stream()
-                    .map(resource -> {
-                        String resourceUrl = lessonResourceService.getResourceUrlById(resource.getId());
-                        return ResourceDetailGetDto.fromModel(resource, resourceUrl);
-                    })
-                    .collect(Collectors.toList());
+            List<ResourceDetailGetDto> resourceDetailGetDtos = getAllResourcesByLesson(lesson);
 
             LessonDetailGetDto lessonDto = new LessonDetailGetDto(
                     lesson.getId(),
@@ -89,6 +92,15 @@ public class LessonService {
         }
 
         return lessonDetailGetDtos;
+    }
+
+    private List<ResourceDetailGetDto> getAllResourcesByLesson(Lesson lesson) {
+        return lesson.getLessonResources().stream()
+                .map(resource -> {
+                    String resourceUrl = lessonResourceService.getResourceUrlById(resource.getId());
+                    return ResourceDetailGetDto.fromModel(resource, resourceUrl);
+                })
+                .collect(Collectors.toList());
     }
 
 
@@ -126,6 +138,50 @@ public class LessonService {
         }
 
         return lessonRepository.save(savedMainLesson);
+    }
+
+    public LessonDetailGetDto modifyPartialLesson(Long courseId,
+                                                  Long moduleId,
+                                                  Long lessonId,
+                                                  LessonPatchDto lessonPatchDto) {
+        if (!courseService.checkExistedCourseId(courseId))
+            throw new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseId);
+
+        if (!courseModuleService.checkModuleBelongsToCourse(moduleId, lessonId))
+            throw new NotFoundException(Constants.ErrorCode.COURSE_MODULE_NOT_FOUND, moduleId);
+
+        Lesson patchedLesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.LESSON_NOT_FOUND, lessonId));
+
+        if (!lessonPatchDto.title().isEmpty()
+                && !lessonPatchDto.title().isBlank()
+                && !patchedLesson.getTitle().equals(lessonPatchDto.title()))
+            patchedLesson.setTitle(lessonPatchDto.title());
+
+        if (!lessonPatchDto.description().isEmpty()
+                && !lessonPatchDto.description().isBlank()
+                && !patchedLesson.getDescription().equals(lessonPatchDto.description()))
+            patchedLesson.setDescription(lessonPatchDto.description());
+
+        if (lessonPatchDto.duration() != null
+                && !Objects.equals(patchedLesson.getDuration(), lessonPatchDto.duration()))
+            patchedLesson.setDuration(lessonPatchDto.duration());
+
+        Lesson savedLesson = lessonRepository.save(patchedLesson);
+
+        List<ResourceDetailGetDto> resourceDetailGetDtos = getAllResourcesByLesson(savedLesson);
+        return new LessonDetailGetDto(
+                savedLesson.getId(),
+                savedLesson.getCourseModule().getId(),
+                savedLesson.getTitle(),
+                savedLesson.getDescription(),
+                savedLesson.getDuration(),
+                resourceDetailGetDtos
+        );
+    }
+
+    boolean checkExistedLessonId (Long lessonId) {
+        return lessonRepository.existsById(lessonId);
     }
 
     private String uploadResourceFiles(MultipartFile file) {

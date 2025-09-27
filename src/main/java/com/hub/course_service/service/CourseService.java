@@ -84,9 +84,11 @@ public class CourseService {
         return toCourseInfoListGetDto(coursePage);
     }
 
+    @Transactional
     public CourseDetailGetDto getDetailCourseById(Long id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, id));
+
         String imagePresignedUrl = courseImageService.getPresignedImageUrlByCourseId(course.getId());
 
         return CourseDetailGetDto.fromModel(course, imagePresignedUrl);
@@ -130,10 +132,8 @@ public class CourseService {
         // Set Image for Course
         String imageUrl = courseImageService.uploadCourseImage(courseImage);
 
-        CourseImage savedMainCourseImage = courseImageService.saveImageUrl(imageUrl, savedMainCourse);
-        List<CourseImage> courseImages = new ArrayList<>();
-        courseImages.add(savedMainCourseImage);
-        savedMainCourse.setCourseImages(courseImages);
+        CourseImage savedImage = courseImageService.saveImageUrl(imageUrl, savedMainCourse);
+        savedMainCourse.getCourseImages().add(savedImage);
         log.info("COURSE SERVICE: Completely set image to course");
 
         // Set Module
@@ -148,7 +148,7 @@ public class CourseService {
         }
         log.info("COURSE SERVICE: Completely set module and lesson to course");
 
-        savedMainCourse = courseRepository.save(savedMainCourse);
+        //savedMainCourse = courseRepository.save(savedMainCourse);
 
         return CourseDetailGetDto.fromModel(savedMainCourse, null);
     }
@@ -158,6 +158,10 @@ public class CourseService {
                 .orElseThrow(() -> new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseId));
         course.setApprovalStatus(approvalStatus);
         courseRepository.save(course);
+    }
+
+    boolean checkExistedCourseId(Long courseId) {
+        return courseRepository.existsById(courseId);
     }
 
     private void setCourseCategory(Long categoryId, Course course) {
@@ -174,7 +178,7 @@ public class CourseService {
 
     // Course Title Validation
     private boolean checkExistedTitle(String title, Long id) {
-        return courseRepository.findExistedName(title, id) != null;
+        return courseRepository.findExistedName(title, id);
     }
 
     private void validateDuplicateTitle(String title, Long id) {

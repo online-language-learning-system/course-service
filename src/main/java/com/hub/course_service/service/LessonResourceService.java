@@ -1,9 +1,8 @@
 package com.hub.course_service.service;
 
 import com.hub.common_library.exception.NotFoundException;
-import com.hub.course_service.client.MediaServiceClient;
+import com.hub.course_service.feignclient.MediaServiceClient;
 import com.hub.course_service.model.LessonResource;
-import com.hub.course_service.model.enumeration.ResourceType;
 import com.hub.course_service.repository.LessonResourceRepository;
 import com.hub.course_service.utils.Constants;
 import org.springframework.http.ResponseEntity;

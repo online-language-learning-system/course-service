@@ -1,11 +1,12 @@
 package com.hub.course_service.controller;
 
 import com.hub.course_service.model.dto.lesson.LessonDetailGetDto;
+import com.hub.course_service.model.dto.lesson.LessonPatchDto;
 import com.hub.course_service.service.LessonService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +22,14 @@ public class LessonController {
     @GetMapping("/storefront/{moduleId}/lessons")
     public ResponseEntity<List<LessonDetailGetDto>> getAllLessonByModuleId(@PathVariable(value = "moduleId") Long moduleId) {
         return ResponseEntity.ok(lessonService.getAllLessonByModuleId(moduleId));
+    }
+
+    @PatchMapping("/storefront/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}")
+    public ResponseEntity<LessonDetailGetDto> modifyLessonPartial (
+            @PathVariable(value = "courseId") Long courseId,
+            @PathVariable(value = "moduleId") Long moduleId,
+            @PathVariable(value = "lessonId") Long lessonId,
+            @Valid @RequestBody LessonPatchDto lessonPatchDto) {
+        return ResponseEntity.ok().body(lessonService.modifyPartialLesson(courseId, moduleId, lessonId, lessonPatchDto));
     }
 }

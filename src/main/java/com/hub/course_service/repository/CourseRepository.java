@@ -15,10 +15,11 @@ import java.math.BigDecimal;
 public interface CourseRepository
         extends JpaRepository<Course, Long> {
 
-    @Query("SELECT course FROM Course course " +
-            "WHERE course.title = :courseTitle " +
-            "AND (:courseTitle IS NULL OR course.id != :courseId)")
-    Course findExistedName(@Param("courseTitle") String courseTitle, @Param("courseId") Long courseId);
+    @Query("SELECT COUNT(course) > 0 FROM Course course " +
+            "WHERE (course.title = :courseTitle) " +
+            "AND (:courseId IS NULL OR course.id != :courseId)")
+    boolean findExistedName(@Param("courseTitle") String courseTitle,
+                            @Param("courseId") Long courseId);
 
     @Query("SELECT course FROM Course course LEFT JOIN course.courseCategory category "
             + "WHERE LOWER(course.title) LIKE CONCAT('%', :courseTitle, '%') "

@@ -50,10 +50,10 @@ public class Course extends AbstractAuditEntity {
     @Column(name = "approval_status")
     private ApprovalStatus approvalStatus;      // Course approval by admin
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", orphanRemoval = true)
     private List<CourseImage> courseImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", orphanRemoval = true)
     private List<CourseModule> courseModules = new ArrayList<>();
 
     @PrePersist
@@ -65,9 +65,12 @@ public class Course extends AbstractAuditEntity {
 
 }
 
-//    CascadeType.PERSIST → when saving parent entity, automatically save child entity.
-//    CascadeType.MERGE → when merging/updating parent, merge child.
-//    CascadeType.REMOVE → when deleting parent, delete child.
-//    CascadeType.REFRESH → when refreshing parent, refresh child.
-//    CascadeType.DETACH → when detach parent, detach child.
-//    CascadeType.ALL → includes all of the above types.
+/**
+ *  CascadeType - a mechanism for propagating actions from parent entity to child entity in a relationship
+ *  CascadeType.PERSIST → when saving parent entity, automatically save child entity.
+ *  CascadeType.MERGE → when merging/updating parent, merge child.
+ *  CascadeType.REMOVE → when deleting parent, delete child.
+ *  CascadeType.REFRESH → when refreshing parent, refresh child.
+ *  CascadeType.DETACH → when detach parent, detach child.
+ *  CascadeType.ALL → includes all of the above types.
+*/

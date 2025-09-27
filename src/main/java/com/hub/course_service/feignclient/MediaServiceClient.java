@@ -1,4 +1,4 @@
-package com.hub.course_service.client;
+package com.hub.course_service.feignclient;
 
 import com.hub.course_service.config.MediaServiceClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;

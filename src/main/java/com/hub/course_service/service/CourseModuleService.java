@@ -15,15 +15,11 @@ import java.util.stream.Collectors;
 public class CourseModuleService {
 
     private final CourseModuleRepository courseModuleRepository;
-    private final LessonService lessonService;
-    private final LessonResourceService lessonResourceService;
 
     public CourseModuleService(CourseModuleRepository courseModuleRepository,
                                LessonService lessonService,
                                LessonResourceService lessonResourceService) {
         this.courseModuleRepository = courseModuleRepository;
-        this.lessonService = lessonService;
-        this.lessonResourceService = lessonResourceService;
     }
 
     public List<CourseModuleDetailGetDto> getAllModuleByCourseId(Long courseId) {
@@ -50,6 +46,10 @@ public class CourseModuleService {
     public void addLessonToModule(Lesson lesson, CourseModule courseModule) {
         courseModule.getLessons().add(lesson);
         courseModuleRepository.save(courseModule);
+    }
+
+    boolean checkModuleBelongsToCourse(Long moduleId, Long lessonId) {
+        return courseModuleRepository.existsByIdAndLessons_Id(moduleId, lessonId);
     }
 
 }

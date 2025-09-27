@@ -1,7 +1,7 @@
 package com.hub.course_service.service;
 
 import com.hub.common_library.exception.NotFoundException;
-import com.hub.course_service.client.MediaServiceClient;
+import com.hub.course_service.feignclient.MediaServiceClient;
 import com.hub.course_service.model.Course;
 import com.hub.course_service.model.CourseImage;
 import com.hub.course_service.repository.CourseImageRepository;
@@ -53,23 +53,23 @@ public class CourseImageService {
     }
 
     // Save image url from S3 Bucket to Database
-    public List<CourseImage> saveImageUrls(List<String> imageUrls, Course course) {
-
-        List<CourseImage> courseImages = imageUrls.stream().map(
-            imageUrl -> {
-                CourseImage courseImage = new CourseImage();
-                courseImage.setImageUrl(imageUrl);
-                courseImage.setCourse(course);
-                return courseImage;
-            }
-        ).collect(Collectors.toList());
-
-        // collect(Collectors.toList()) -- Mutable List
-        // toList() -- Immutable List
-
-        courseImageRepository.saveAll(courseImages);
-        return courseImages;
-    }
+//    public List<CourseImage> saveImageUrls(List<String> imageUrls, Course course) {
+//
+//        List<CourseImage> courseImages = imageUrls.stream().map(
+//            imageUrl -> {
+//                CourseImage courseImage = new CourseImage();
+//                courseImage.setImageUrl(imageUrl);
+//                courseImage.setCourse(course);
+//                return courseImage;
+//            }
+//        ).collect(Collectors.toList());
+//
+//        // collect(Collectors.toList()) -- Mutable List
+//        // toList() -- Immutable List
+//
+//        courseImageRepository.saveAll(courseImages);
+//        return courseImages;
+//    }
 
     public CourseImage saveImageUrl(String imageUrl, Course course) {
 

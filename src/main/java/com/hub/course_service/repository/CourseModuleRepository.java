@@ -13,6 +13,8 @@ import java.util.List;
 public interface CourseModuleRepository
         extends JpaRepository<CourseModule, Long> {
 
+    boolean existsByIdAndLessons_Id(Long moduleId, Long lessonId);
+
     @Query("SELECT module FROM CourseModule module " +
             "WHERE module.course = :courseId")
     Iterable<CourseModule> findModuleByCourseId(@Param(value = "courseId") Long courseId);

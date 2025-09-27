@@ -26,7 +26,7 @@ public class CourseCategory {
     @Enumerated(EnumType.STRING)
     private CategoryLevel categoryLevel;
 
-    @OneToMany(mappedBy = "courseCategory", cascade = CascadeType.ALL)    // Mapped By fieldName of entity
+    @OneToMany(mappedBy = "courseCategory")    // Mapped By fieldName of entity
     private List<Course> courses = new ArrayList<>();
 
     private String description;
