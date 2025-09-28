@@ -16,9 +16,7 @@ public class CourseModuleService {
 
     private final CourseModuleRepository courseModuleRepository;
 
-    public CourseModuleService(CourseModuleRepository courseModuleRepository,
-                               LessonService lessonService,
-                               LessonResourceService lessonResourceService) {
+    public CourseModuleService(CourseModuleRepository courseModuleRepository) {
         this.courseModuleRepository = courseModuleRepository;
     }
 

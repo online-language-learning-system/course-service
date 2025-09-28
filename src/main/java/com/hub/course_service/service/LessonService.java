@@ -13,6 +13,7 @@ import com.hub.course_service.model.enumeration.ResourceType;
 import com.hub.course_service.repository.LessonRepository;
 import com.hub.course_service.repository.LessonResourceRepository;
 import com.hub.course_service.utils.Constants;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,20 +24,17 @@ import java.util.stream.Collectors;
 @Service
 public class LessonService {
 
-    private final CourseService courseService;
     private final CourseModuleService courseModuleService;
     private final MediaServiceClient mediaServiceClient;
     private final LessonRepository lessonRepository;
     private final LessonResourceService lessonResourceService;
     private final LessonResourceRepository lessonResourceRepository;
 
-    public LessonService(CourseService courseService,
-                         CourseModuleService courseModuleService,
+    public LessonService(CourseModuleService courseModuleService,
                          MediaServiceClient mediaServiceClient,
                          LessonRepository lessonRepository,
                          LessonResourceService lessonResourceService,
                          LessonResourceRepository lessonResourceRepository) {
-        this.courseService = courseService;
         this.courseModuleService = courseModuleService;
         this.mediaServiceClient = mediaServiceClient;
         this.lessonRepository = lessonRepository;
@@ -140,12 +138,11 @@ public class LessonService {
         return lessonRepository.save(savedMainLesson);
     }
 
-    public LessonDetailGetDto modifyPartialLesson(Long courseId,
-                                                  Long moduleId,
+    public LessonDetailGetDto modifyPartialLesson(Long moduleId,
                                                   Long lessonId,
                                                   LessonPatchDto lessonPatchDto) {
-        if (!courseService.checkExistedCourseId(courseId))
-            throw new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseId);
+//        if (!courseService.checkExistedCourseId(courseId))
+//            throw new NotFoundException(Constants.ErrorCode.COURSE_NOT_FOUND, courseId);
 
         if (!courseModuleService.checkModuleBelongsToCourse(moduleId, lessonId))
             throw new NotFoundException(Constants.ErrorCode.COURSE_MODULE_NOT_FOUND, moduleId);

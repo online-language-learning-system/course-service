@@ -95,7 +95,7 @@
 		<dependency>
 			<groupId>com.hub</groupId>
 			<artifactId>common-library</artifactId>
-			<version>${version}</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- gRPC runtime -->
@@ -185,7 +185,7 @@
 				<artifactId>protobuf-maven-plugin</artifactId>
 				<version>0.6.1</version>
 				<configuration>
-					<protoSourceRoot>${project.basedir}/src/main/resources/proto</protoSourceRoot>
+					<protoSourceRoot>src/main/resources/proto</protoSourceRoot>
 					<protocArtifact>com.google.protobuf:protoc:3.25.0:exe:${os.detected.classifier}</protocArtifact>
 					<pluginId>grpc-java</pluginId>
 					<pluginArtifact>io.grpc:protoc-gen-grpc-java:1.58.0:exe:${os.detected.classifier}</pluginArtifact>

@@ -24,12 +24,11 @@ public class LessonController {
         return ResponseEntity.ok(lessonService.getAllLessonByModuleId(moduleId));
     }
 
-    @PatchMapping("/storefront/courses/{courseId}/modules/{moduleId}/lessons/{lessonId}")
+    @PatchMapping("/storefront/courses/{courseId}/modules/{moduleId}/lessons")
     public ResponseEntity<LessonDetailGetDto> modifyLessonPartial (
             @PathVariable(value = "courseId") Long courseId,
             @PathVariable(value = "moduleId") Long moduleId,
-            @PathVariable(value = "lessonId") Long lessonId,
             @Valid @RequestBody LessonPatchDto lessonPatchDto) {
-        return ResponseEntity.ok().body(lessonService.modifyPartialLesson(courseId, moduleId, lessonId, lessonPatchDto));
+        return ResponseEntity.ok().body(lessonService.modifyPartialLesson(courseId, moduleId, lessonPatchDto));
     }
 }

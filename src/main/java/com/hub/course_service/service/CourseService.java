@@ -14,6 +14,7 @@ import com.hub.course_service.model.enumeration.ApprovalStatus;
 import com.hub.course_service.repository.*;
 import com.hub.course_service.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,6 @@ public class CourseService {
     private final CourseImageService courseImageService;
     private final CourseModuleService courseModuleService;
     private final LessonService lessonService;
-    private final LessonResourceService lessonResourceService;
 
     public CourseService(CourseRepository courseRepository,
                          CourseCategoryRepository courseCategoryRepository,
@@ -49,7 +49,6 @@ public class CourseService {
         this.courseImageService = courseImageService;
         this.courseModuleService = courseModuleService;
         this.lessonService = lessonService;
-        this.lessonResourceService = lessonResourceService;
     }
 
     public CourseInfoListGetDto getCoursesByMultiQuery(
