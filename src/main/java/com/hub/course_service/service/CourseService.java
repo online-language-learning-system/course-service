@@ -51,6 +51,13 @@ public class CourseService {
         this.lessonService = lessonService;
     }
 
+    public CourseInfoListGetDto getAllCourses(int pageNo,
+                                                int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Course> coursePage = courseRepository.findAllApprovalCourse(pageable);
+        return toCourseInfoListGetDto(coursePage);
+    }
+
     public CourseInfoListGetDto getCoursesByMultiQuery(
             int pageNo,
             int pageSize,

@@ -18,13 +18,10 @@ public record CourseDetailGetDto(
         String level,
         String description,
         ApprovalStatus approvalStatus,
-
         OffsetDateTime startDate,
         OffsetDateTime endDate,
-
         List<CourseModuleDetailGetDto> modules,
-        List<CourseImageDetailGetDto> images,
-
+        String imageUrl,
         String createdBy,
         OffsetDateTime createOn,
         String lastModifiedBy,
@@ -47,12 +44,7 @@ public record CourseDetailGetDto(
                 .map(courseModule -> CourseModuleDetailGetDto.fromModel(courseModule))
                 .collect(Collectors.toList()),
 
-            course.getCourseImages().stream()
-                    .map(image ->
-                            CourseImageDetailGetDto.fromModel(image, imagePresignedUrl)
-                    )
-                    .collect(Collectors.toList()),
-
+            imagePresignedUrl,
             course.getCreatedBy(),
             course.getCreatedOn(),
             course.getLastModifiedBy(),

@@ -39,7 +39,7 @@ public class CourseServiceImpl extends CourseServiceGrpc.CourseServiceImplBase {
                             .setCourseName(courseDetailGetDto.title())
                             .setInstructor(courseDetailGetDto.createdBy())
                             .setPrice(courseDetailGetDto.price().floatValue())
-                            .setImageUrl(courseDetailGetDto.images().get(0).imageUrl())
+                            .setImageUrl(courseDetailGetDto.imageUrl())
                             .build())
                     .toList();
 

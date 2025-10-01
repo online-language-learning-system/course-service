@@ -21,6 +21,11 @@ public interface CourseRepository
     boolean findExistedName(@Param("courseTitle") String courseTitle,
                             @Param("courseId") Long courseId);
 
+    @Query("SELECT course FROM Course course " +
+            "WHERE course.approvalStatus = 'APPROVED' " +
+            "ORDER BY course.id ASC")
+    Page<Course> findAllApprovalCourse(Pageable pageable);
+
     @Query("SELECT course FROM Course course LEFT JOIN course.courseCategory category "
             + "WHERE LOWER(course.title) LIKE CONCAT('%', :courseTitle, '%') "
             + "AND (category.id = :categoryId OR :categoryId IS NULL) "
@@ -35,7 +40,8 @@ public interface CourseRepository
                                                                      Pageable pageable);
 
     @Query("SELECT course FROM Course course " +
-            "WHERE course.price = 0")
+            "WHERE course.price = 0 " +
+            "AND course.approvalStatus = 'APPROVED' ")
     Page<Course> findFreeCourse(@Param("price") BigDecimal price, Pageable pageable);
 
     @Query("SELECT course FROM Course course " +

@@ -1,6 +1,7 @@
 package com.hub.course_service.controller;
 
 import com.hub.course_service.model.dto.course.CourseDetailGetDto;
+import com.hub.course_service.model.dto.course.CourseInfoGetDto;
 import com.hub.course_service.model.dto.course.CourseInfoListGetDto;
 import com.hub.course_service.model.dto.course.CoursePostDto;
 import com.hub.course_service.model.enumeration.ApprovalStatus;
@@ -22,6 +23,18 @@ public class CourseController {
 
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
+    }
+
+    @GetMapping(path = "/storefront/courses/all")
+    public ResponseEntity<CourseInfoListGetDto> getAllApprovedCourse(
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "9", required = false) int pageSize) {
+        return ResponseEntity.ok(courseService.getAllCourses(pageNo, pageSize));
+    }
+
+    @GetMapping("/storefront/{courseId}/detail")
+    public ResponseEntity<CourseDetailGetDto> getDetailCourseById(@PathVariable(value = "courseId") Long courseId) {
+        return ResponseEntity.ok(courseService.getDetailCourseById(courseId));
     }
 
     // Get Pending Course
@@ -60,11 +73,6 @@ public class CourseController {
                     endPrice
             )
         );
-    }
-
-    @GetMapping("/storefront/{courseId}/detail")
-    public ResponseEntity<CourseDetailGetDto> getDetailCourseById(@PathVariable(value = "courseId") Long courseId) {
-        return ResponseEntity.ok(courseService.getDetailCourseById(courseId));
     }
 
     @PostMapping(value = "/backoffice/courses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
