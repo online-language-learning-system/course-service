@@ -7,8 +7,9 @@ import java.math.BigDecimal;
 public record CourseInfoGetDto(
         Long id,
         String title,
-        BigDecimal price,
         String teachingLanguage,
+        String instructor,
+        BigDecimal price,
         String level,
         String imagePresignedUrl
 ) {
@@ -19,8 +20,9 @@ public record CourseInfoGetDto(
         return new CourseInfoGetDto(
             course.getId(),
             course.getTitle(),
-            course.getPrice(),
             course.getTeachingLanguage(),
+            course.getCreatedBy(),
+            course.getPrice(),
             course.getCourseCategory().getCategoryLevel().toString(),
             imagePresignedUrl
         );
