@@ -91,7 +91,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.hub</groupId>
 			<artifactId>common-library</artifactId>

@@ -1,5 +1,7 @@
 package com.hub.course_service.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,12 +9,15 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
+import java.util.Collection;
 import java.util.Optional;
 
+@Slf4j
 @Configuration
 @EntityScan("com.hub.course_service.model")
 @EnableJpaRepositories("com.hub.course_service.repository")
@@ -30,13 +35,21 @@ public class DatabaseAutoConfig {
             if (auth == null)
                 return Optional.of("system");
 
-            if (auth.getPrincipal() instanceof JwtAuthenticationToken jwtAuthenticationToken) {
-                Jwt jwt = jwtAuthenticationToken.getToken();
+            /*
+                log.info("Auth class: " + auth.getClass());
+                Auth class: class org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+                log.info("Principal class: " + auth.getPrincipal().getClass());
+                Principal class: class org.springframework.security.oauth2.jwt.Jwt
+            */
+
+            if (auth instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+                Jwt jwt = (Jwt) auth.getPrincipal();
                 String fullName = jwt.getClaimAsString(FIRST_NAME) + " " + jwt.getClaimAsString(LAST_NAME);
                 return Optional.of(fullName);
             }
 
             return Optional.of(auth.getName()); // Returns the id of this principal.
+
         };
     }
 
