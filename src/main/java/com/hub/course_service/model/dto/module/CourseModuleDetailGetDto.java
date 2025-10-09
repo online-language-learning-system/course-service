@@ -11,6 +11,7 @@ public record CourseModuleDetailGetDto(
         Long id,
         Long courseId,
         String title,
+
         String description,
         int orderIndex,
         boolean canFreeTrial,

@@ -4,6 +4,7 @@ option java_package = "com.hub.course_service.grpc";
 option java_multiple_files = true;
 
 // Service (interface/stub Java cho server và client) - provides info course
+// stub = client proxy
 service CourseService {
   rpc GetCourseDetails (CourseListRequest) returns (CourseListResponse);
 }

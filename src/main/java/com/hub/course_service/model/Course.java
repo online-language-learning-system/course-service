@@ -55,6 +55,9 @@ public class Course extends AbstractAuditEntity {
     @OneToMany(mappedBy = "course", orphanRemoval = true)
     private List<CourseModule> courseModules = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<CourseTag> courseTags = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
         OffsetDateTime now = OffsetDateTime.now();

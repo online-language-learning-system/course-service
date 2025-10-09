@@ -101,7 +101,6 @@ public class LessonService {
                 .collect(Collectors.toList());
     }
 
-
     public Lesson createLesson(CourseModule courseModule,
                                LessonPostDto lessonPostDto,
                                LinkedList<MultipartFile> resourceFiles) {

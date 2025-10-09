@@ -13,5 +13,6 @@ public final class Constants {
         public static final String COURSE_IMAGE_NOT_FOUND = "COURSE_IMAGE_NOT_FOUND";
         public static final String LESSON_RESOURCE_NOT_FOUND = "LESSON_RESOURCE_NOT_FOUND";
         public static final String LESSON_RESOURCE_FILE_NOT_FOUND = "LESSON_RESOURCE_FILE_NOT_FOUND";
+        public static final String TAG_NOT_FOUND = "TAG_NOT_FOUND";
     }
 }
